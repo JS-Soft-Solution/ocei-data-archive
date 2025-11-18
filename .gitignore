@@ -52,8 +52,8 @@ Thumbs.db
 
 # --------------------------------------
 # Logs & framework cache (already covered above, but explicit)
-/app/storage/logs/
-/app/storage/framework/
+!/app/storage/logs/
+!/app/storage/framework/
 
 ########################################
 # Public directory
