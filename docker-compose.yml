@@ -37,7 +37,7 @@ services:
       MYSQL_USER: ocei_user
       MYSQL_PASSWORD: OceiArchive@2025
     ports:
-      - "3307:3306" # host:container, so it doesn’t clash with local MySQL
+      - "3307:3306" # Host port 3307 -> Container port 3306
     volumes:
       - db_data:/var/lib/mysql
     networks:
@@ -58,8 +58,22 @@ services:
     networks:
       - ocei
 
+  node:
+    image: node:20-alpine
+    container_name: ocei-archive-node
+    working_dir: /var/www/html
+    volumes:
+      - ./app:/var/www/html
+    # Keep container alive so you can exec in or run 'npm run dev' manually
+    command: sh -c "tail -f /dev/null"
+    ports:
+      - "5173:5173" # Vite port
+    networks:
+      - ocei
+
 volumes:
   db_data:
 
 networks:
   ocei:
+    driver: bridge
