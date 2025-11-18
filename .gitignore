@@ -1,0 +1,89 @@
+########################################
+# OS junk
+########################################
+.DS_Store
+Thumbs.db
+
+########################################
+# IDEs / Editors
+########################################
+.idea/
+.vscode/
+*.code-workspace
+.exit/
+
+########################################
+# Laravel app (located in ./app)
+########################################
+
+# Environment files
+/app/.env
+/app/.phpunit.result.cache
+
+# Composer dependencies
+/app/vendor/
+
+# Node dependencies
+/app/node_modules/
+
+# --------------------------------------
+# Laravel storage
+# --------------------------------------
+# Ignore everything inside storage by default
+/app/storage/*
+
+# Keep the "app" directory itself
+!/app/storage/app/
+
+# Inside storage/app, ignore everything again...
+/app/storage/app/*
+
+# ...but keep the "public" directory
+!/app/storage/app/public/
+
+# Inside storage/app/public, ignore all contents (files & dirs)
+/app/storage/app/public/*
+
+# ...but keep any .gitignore files in any subdir under storage/app/public
+/app/storage/app/public/**/.gitignore
+
+# (Result: directory tree under storage/app/public is tracked via .gitignore
+#  markers, but actual uploaded files are ignored.)
+
+# --------------------------------------
+# Logs & framework cache (already covered above, but explicit)
+/app/storage/logs/
+/app/storage/framework/
+
+########################################
+# Public directory
+########################################
+# Keep public/index.php, etc. (normal Laravel behavior),
+# just ignore generated stuff.
+
+# Public storage symlink created by `php artisan storage:link`
+/app/public/storage
+
+# Vite / build artifacts
+/app/public/hot
+/app/public/build
+
+########################################
+# Tests & tooling
+########################################
+/app/phpunit.xml
+
+# Optional: ignore JS lock files if you prefer
+# (uncomment if you don't want them in Git)
+/app/package-lock.json
+/app/yarn.lock
+/app/pnpm-lock.yaml
+
+########################################
+# Docker & misc
+########################################
+.env.docker
+.env.local
+
+# If you ever create a local db_data directory instead of Docker volume
+/db_data/

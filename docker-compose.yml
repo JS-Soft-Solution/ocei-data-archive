@@ -1,0 +1,65 @@
+version: '3.9'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ocei-archive-app
+    working_dir: /var/www/html
+    volumes:
+      - ./app:/var/www/html
+    depends_on:
+      - db
+    networks:
+      - ocei
+
+  nginx:
+    image: nginx:stable
+    container_name: ocei-archive-nginx
+    ports:
+      - "8090:80"
+    volumes:
+      - ./app:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - ocei
+
+  db:
+    image: mysql:8.0
+    container_name: ocei-archive-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: OceiRoot@2025
+      MYSQL_DATABASE: ocei_data_archive
+      MYSQL_USER: ocei_user
+      MYSQL_PASSWORD: OceiArchive@2025
+    ports:
+      - "3307:3306" # host:container, so it doesn’t clash with local MySQL
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - ocei
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: ocei-phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: OceiRoot@2025
+    ports:
+      - "8091:80"
+    depends_on:
+      - db
+    networks:
+      - ocei
+
+volumes:
+  db_data:
+
+networks:
+  ocei:
