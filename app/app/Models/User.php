@@ -102,4 +102,20 @@ class User extends Authenticatable
         // $user->password = 'plain';
         'password'          => 'hashed',
     ];
+
+
+    public function isSuperAdmin()
+    {
+        return $this->admin_type === 'super_admin' || $this->admin_type === 'system_admin';
+    }
+
+    public function hasRole($role)
+    {
+        if ($this->isSuperAdmin()) return true; // Super admin accesses everything
+
+        if (is_array($role)) {
+            return in_array($this->admin_type, $role);
+        }
+        return $this->admin_type === $role;
+    }
 }
