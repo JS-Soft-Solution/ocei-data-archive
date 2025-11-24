@@ -59,3 +59,50 @@ Route::middleware(['auth'])->group(function () {
     });
 
 });
+
+
+// Helper function to generate routes for a permit type
+function permitRoutes($prefix, $controller, $name) {
+    Route::prefix($prefix)->name($name . '.')->group(function () use ($controller) {
+        // Operator
+        Route::middleware('role:data_entry_operator,super_admin')->group(function () use ($controller) {
+            Route::get('/search', [$controller, 'search'])->name('search');
+            Route::get('/drafts', [$controller, 'drafts'])->name('drafts');
+            Route::get('/rejected', [$controller, 'rejected'])->name('rejected');
+            Route::get('/submitted', [$controller, 'submitted'])->name('submitted');
+            Route::get('/approved-list', [$controller, 'approvedListOperator'])->name('approved.operator');
+            Route::get('/create', [$controller, 'create'])->name('create');
+            Route::post('/store', [$controller, 'store'])->name('store');
+            Route::get('/{id}/edit', [$controller, 'edit'])->name('edit');
+            Route::put('/{id}/update', [$controller, 'update'])->name('update');
+            Route::post('/{id}/submit', [$controller, 'submitToOffice'])->name('submit');
+        });
+
+        // Office Assistant
+        Route::middleware('role:office_assistant,super_admin')->group(function () use ($controller) {
+            Route::get('/pending', [$controller, 'pendingForAssistant'])->name('pending');
+            Route::get('/rejected-by-me', [$controller, 'rejectedByAssistant'])->name('rejected.assistant');
+            Route::get('/approved-by-me', [$controller, 'approvedByAssistant'])->name('approved.assistant');
+            Route::post('/{id}/verify', [$controller, 'verify'])->name('verify');
+            Route::post('/{id}/reject', [$controller, 'reject'])->name('reject');
+        });
+
+        // Secretary
+        Route::middleware('role:secretary,super_admin')->group(function () use ($controller) {
+            Route::get('/secretary/pending', [$controller, 'pendingForSecretary'])->name('secretary.pending');
+            Route::get('/secretary/approved', [$controller, 'approvedBySecretary'])->name('secretary.approved');
+            Route::post('/{id}/approve', [$controller, 'approve'])->name('approve');
+            Route::post('/{id}/secretary-reject', [$controller, 'reject'])->name('secretary.reject');
+        });
+
+        // Shared / Reporting
+        Route::middleware('role:chairman,super_admin,secretary')->group(function () use ($controller) {
+            Route::get('/export/{type}', [$controller, 'export'])->name('export');
+        });
+    });
+}
+
+// Generate Routes
+permitRoutes('permits/electrician', \App\Http\Controllers\Permit\ElectricianController::class, 'permits.electrician');
+permitRoutes('permits/supervisor', \App\Http\Controllers\Permit\SupervisorController::class, 'permits.supervisor');
+permitRoutes('permits/contractor', \App\Http\Controllers\Permit\ContractorController::class, 'permits.contractor');
