@@ -5,8 +5,8 @@
                 class="toggle-line"></span></span></button>
     <a class="navbar-brand me-1 me-sm-3" href="{{ url('/') }}">
         <div class="d-flex align-items-center"><img class="me-2"
-                                                    src="{{ asset('assets/img/icons/spot-illustrations/falcon.png') }}" alt="" width="40" /><span
-                class="font-sans-serif text-primary">falcon</span></div>
+                                                    src="{{ asset('assets/img/ocei-logo.png') }}" alt="" width="40" /><span
+                class="font-sans-serif text-primary">OCEI</span></div>
     </a>
 
     {{-- Search Bar --}}
