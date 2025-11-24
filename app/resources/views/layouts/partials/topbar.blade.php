@@ -104,9 +104,10 @@
                                          data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <div class="avatar avatar-xl">
                     {{-- Use dynamic user avatar if available, otherwise default --}}
-                    <img class="rounded-circle" src="{{ asset('assets/img/team/3-thumb.png') }}" alt="User" />
+                    <img class="rounded-circle" src="{{ asset('storage/'.auth()->user()->applicant_image) }}" alt="User" />
                 </div>
             </a>
+
             <div class="dropdown-menu dropdown-caret dropdown-caret dropdown-menu-end py-0"
                  aria-labelledby="navbarDropdownUser">
                 <div class="bg-white dark__bg-1000 rounded-2 py-2">
@@ -118,15 +119,14 @@
                     <div class="dropdown-divider"></div>
 
                     {{-- Profile Link: Ensure route 'profile.show' exists or change to # --}}
-                    <a class="dropdown-item" href="{{ Route::has('profile.show') ? route('profile.show') : '#' }}">
+                    <a class="dropdown-item" href="{{ Route::has('users.show') ? route('users.show',auth()->id()) : '#' }}">
                         Profile &amp; account
                     </a>
 
                     <div class="dropdown-divider"></div>
 
-                    {{-- Settings Link: Ensure route 'settings.index' exists or change to # --}}
-                    <a class="dropdown-item" href="{{ Route::has('settings.index') ? route('settings.index') : '#' }}">
-                        Settings
+                    <a class="dropdown-item" href="{{ route('password.change') }}">
+                        Change Password
                     </a>
 
                     {{-- Logout Functionality --}}

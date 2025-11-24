@@ -57,8 +57,10 @@ class AuthController extends Controller
         }
 
         // 2. STANDARD DB LOGIN
-        // Determine if input is email or user_id
-        $loginType = filter_var($input, FILTER_VALIDATE_EMAIL) ? 'email' : 'user_id';
+        // Determine if input is email or user_id or phone numebr
+        $loginType = filter_var($input, FILTER_VALIDATE_EMAIL)
+            ? 'email'
+            : (preg_match('/^[0-9]{11}$/', $input) ? 'mobile_no' : 'user_id');
 
         $credentials = [
             $loginType => $input,

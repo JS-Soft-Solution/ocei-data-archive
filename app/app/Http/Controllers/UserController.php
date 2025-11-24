@@ -107,4 +107,30 @@ class UserController extends Controller
         $user->delete();
         return redirect()->route('users.index')->with('success', 'User removed successfully');
     }
+
+    public function show(User $user)
+    {
+        return view('users.show', compact('user'));
+    }
+
+    public function resetPassword(Request $request, User $user)
+    {
+        // 1. Security Check: Only Super Admin can perform this
+        if (!auth()->user()->isSuperAdmin()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // 2. Validate the inputs
+        $request->validate([
+            'password' => ['required', 'confirmed', \Illuminate\Validation\Rules\Password::defaults()],
+        ]);
+
+        // 3. Update the user's password
+        $user->update([
+            'password' => Hash::make($request->password),
+        ]);
+
+        // 4. Redirect back
+        return back()->with('success', "Password for {$user->full_name} has been reset successfully.");
+    }
 }

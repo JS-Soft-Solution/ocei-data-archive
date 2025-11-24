@@ -72,7 +72,9 @@
                     @forelse($users as $user)
                         <tr class="btn-reveal-trigger">
                             <td class="name align-middle white-space-nowrap py-2">
+                                <a href="{{ route('users.show', $user->id) }}" >
                                 <div class="d-flex align-items-center">
+
                                     <div class="avatar avatar-xl me-2">
                                         @if($user->applicant_image)
                                             <img class="rounded-circle" src="{{ asset('storage/'.$user->applicant_image) }}" alt="" />
@@ -80,11 +82,13 @@
                                             <div class="avatar-name rounded-circle"><span>{{ substr($user->full_name, 0, 2) }}</span></div>
                                         @endif
                                     </div>
+
                                     <div class="flex-1">
                                         <h5 class="mb-0 fs--1">{{ $user->full_name }}</h5>
                                         <span class="text-500">{{ $user->user_id }}</span>
                                     </div>
                                 </div>
+                                </a>
                             </td>
                             <td class="email align-middle py-2"><a href="mailto:{{ $user->email }}">{{ $user->email }}</a></td>
                             <td class="phone align-middle white-space-nowrap py-2"><a href="tel:{{ $user->mobile_no }}">{{ $user->mobile_no }}</a></td>
@@ -100,6 +104,14 @@
                                     <div class="dropdown-menu dropdown-menu-end border py-0" aria-labelledby="customer-dropdown-0">
                                         <div class="py-2">
                                             <a class="dropdown-item" href="{{ route('users.edit', $user->id) }}">Edit</a>
+                                            <a class="dropdown-item" href="{{ route('users.show', $user->id) }}">Details</a>
+                                            @if(auth()->user()->isSuperAdmin())
+                                                <button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#resetPasswordModal"
+                                                        data-user-id="{{ $user->id }}"
+                                                        data-user-name="{{ $user->full_name }}">
+                                                    Reset Password
+                                                </button>
+                                            @endif
                                             <div class="dropdown-divider"></div>
                                             <form action="{{ route('users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Are you sure?');">
                                                 @csrf
@@ -126,5 +138,62 @@
                 {{ $users->appends(request()->query())->links('pagination::bootstrap-5') }}
             @endif
         </div>
+        <div class="modal fade" id="resetPasswordModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 400px">
+                <div class="modal-content position-relative">
+                    <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+                        <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-0">
+                        <div class="rounded-top-lg py-3 ps-4 pe-6 bg-light">
+                            <h4 class="mb-1" id="modalLabel">Reset Password</h4>
+                        </div>
+                        <div class="p-4 pb-0">
+                            <form id="adminResetPasswordForm" method="POST" action="">
+                                @csrf
+                                @method('PUT')
+
+                                <p class="text-word-break fs-10">Setting new password for: <strong id="modalUserName"></strong></p>
+
+                                <div class="mb-3">
+                                    <label class="form-label" for="new_password">New Password</label>
+                                    <input class="form-control" id="new_password" name="password" type="password" required />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="confirm_password">Confirm Password</label>
+                                    <input class="form-control" id="confirm_password" name="password_confirmation" type="password" required />
+                                </div>
+
+                                <div class="d-flex justify-content-end mt-4 mb-3">
+                                    <button class="btn btn-secondary btn-sm me-2" type="button" data-bs-dismiss="modal">Close</button>
+                                    <button class="btn btn-primary btn-sm" type="submit">Save Password</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
+    @push('scripts')
+        <script>
+            var resetPasswordModal = document.getElementById('resetPasswordModal');
+            resetPasswordModal.addEventListener('show.bs.modal', function (event) {
+                // Button that triggered the modal
+                var button = event.relatedTarget;
+                // Extract info from data-* attributes
+                var userId = button.getAttribute('data-user-id');
+                var userName = button.getAttribute('data-user-name');
+
+                // Update the modal's content.
+                var modalUserName = resetPasswordModal.querySelector('#modalUserName');
+                var modalForm = resetPasswordModal.querySelector('#adminResetPasswordForm');
+
+                modalUserName.textContent = userName;
+                // Dynamically set the route action
+                modalForm.action = '/users/' + userId + '/password-reset';
+            });
+        </script>
+    @endpush
 @endsection

@@ -16,10 +16,7 @@
                             <div class="position-relative p-4 pt-md-5 pb-md-7" data-bs-theme="light">
                                 <div class="bg-holder bg-auth-card-shape" style="background-image:url({{ asset('assets/img/icons/spot-illustrations/half-circle.png') }});"></div>
                                 <div class="z-1 position-relative">
-                                    {{-- Added bg-white, rounded, and p-2 classes --}}
                                     <a class="link-light mb-4 font-sans-serif fs-5 d-inline-block fw-bolder bg-white rounded p-2" href="{{ url('/') }}">
-                                        {{-- img-fluid: makes it responsive --}}
-                                        {{-- style="max-width: 200px": ensures it doesn't look too huge on desktop --}}
                                         <img src="{{ asset('assets/img/ocei-logo.png') }}" alt="OCEI Logo" class="img-fluid" style="max-width: 200px;">
                                     </a>
                                     <p class="opacity-75 text-white">OCEI Data Archive Solution. <br>Restricted Access Only.</p>
@@ -49,6 +46,12 @@
                                         </div>
                                     @endif
 
+                                    @if(session('success'))
+                                        <div class="alert alert-success border-0 fs-10 p-2 mb-3">
+                                            {{ session('success') }}
+                                        </div>
+                                    @endif
+
                                     <div class="mb-3">
                                         <label class="form-label" for="login_id">Email or User ID</label>
                                         <input class="form-control" id="login_id" name="login_id" type="text" value="{{ old('login_id') }}" required autofocus />
@@ -67,6 +70,10 @@
                                                 <input class="form-check-input" type="checkbox" id="card-checkbox" name="remember" />
                                                 <label class="form-check-label mb-0" for="card-checkbox">Remember me</label>
                                             </div>
+                                        </div>
+                                        {{-- FORGOT PASSWORD LINK ADDED HERE --}}
+                                        <div class="col-auto">
+                                            <a class="fs-10" href="{{ route('password.request') }}">Forgot Password?</a>
                                         </div>
                                     </div>
 
