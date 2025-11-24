@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -18,8 +19,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Example: Routes only for Super Admin
     Route::middleware(['role:super_admin'])->group(function() {
-        Route::get('/users', function() { return "Manage Users"; });
-        // Route::post('/users', [UserController::class, 'store']);
+        Route::resource('users', UserController::class);
     });
 
     // Example: Routes for Office Assistant and up
