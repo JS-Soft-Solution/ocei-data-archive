@@ -1305,6 +1305,26 @@
                     </li>
                 @endif
 
+                @auth
+                    @if(auth()->user()->hasRole('data_entry_operator'))
+                        <li><a href="{{ route('ex-electrician.operator.search') }}">Search Legacy Data</a></li>
+                        <li><a href="{{ route('ex-electrician.operator.applications.index', ['status' => 'draft']) }}">My Drafts</a></li>
+                        <li><a href="{{ route('ex-electrician.operator.applications.index', ['status' => 'rejected']) }}">My Rejected</a></li>
+                        <!-- Submitted, Approved similar -->
+                    @elseif(auth()->user()->hasRole('office_assistant'))
+                        <li><a href="{{ route('ex-electrician.office-assistant.pending') }}">Pending Approval</a></li>
+                        <li><a href="{{ route('ex-electrician.office-assistant.rejected') }}">Rejected By Me</a></li>
+                        <!-- etc. -->
+                    @elseif(auth()->user()->hasRole('secretary'))
+                        <li><a href="{{ route('ex-electrician.secretary.pending') }}">Pending Approval</a></li>
+                        <!-- etc. -->
+                    @elseif(auth()->user()->hasRole('chairman'))
+                        <li><a href="{{ route('ex-electrician.chairman.approved') }}">All Approved Records</a></li>
+                    @elseif(auth()->user()->hasRole('super_admin'))
+                        <li><a href="{{ route('ex-electrician.admin.applications.index') }}">All Records</a></li>
+                        <li><a href="{{ route('ex-electrician.reports.index') }}">Reports</a></li>
+                    @endif
+                @endauth
             </ul>
         </div>
     </div>
