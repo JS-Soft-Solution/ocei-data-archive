@@ -31,6 +31,14 @@
                             </div>
                         </form>
 
+                        {{-- Per-Page Selector --}}
+                        <div class="d-flex justify-content-between align-items-center mb-3 mt-3">
+                            @include('components.per-page-selector')
+                            <div>
+                                <span class="text-muted">Total: <strong>{{ $applications->total() }}</strong> pending</span>
+                            </div>
+                        </div>
+
                         {{-- Bulk Actions Form --}}
                         <form id="bulkActionForm" method="POST">
                             @csrf
@@ -80,6 +88,14 @@
                                                         class="btn btn-sm btn-primary">
                                                         <i class="fas fa-eye"></i> Review
                                                     </a>
+                                                    <button type="button" class="btn btn-sm btn-success"
+                                                        onclick="singleApprove({{ $app->id }})">
+                                                        <i class="fas fa-check"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm btn-danger"
+                                                        onclick="singleReject({{ $app->id }})">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
                                                 </td>
                                             </tr>
                                         @empty
@@ -146,9 +162,9 @@
                 form.method = 'POST';
                 form.action = '{{ route("ex-electrician.office-assistant.bulk-approve") }}';
                 form.innerHTML = `
-                                        @csrf
-                                        ${selected.map(id => `<input type="hidden" name="application_ids[]" value="${id}">`).join('')}
-                                    `;
+                                                        @csrf
+                                                        ${selected.map(id => `<input type="hidden" name="application_ids[]" value="${id}">`).join('')}
+                                                    `;
                 document.body.appendChild(form);
                 form.submit();
             }
@@ -174,6 +190,62 @@
                     this.appendChild(input);
                 });
             });
+
+            // Single approve function
+            function singleApprove(appId) {
+                Swal.fire({
+                    title: 'Approve Application?',
+                    text: 'This will forward the application to Secretary for final approval.',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, Approve!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = `/ex-electrician/office-assistant/${appId}/approve`;
+                        form.innerHTML = '@csrf';
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
+                });
+            }
+
+            // Single reject function
+            function singleReject(appId) {
+                Swal.fire({
+                    title: 'Reject Application?',
+                    html: '<textarea id="rejectReason" class="swal2-textarea" placeholder="Enter rejection reason..." required></textarea>',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Reject',
+                    cancelButtonText: 'Cancel',
+                    preConfirm: () => {
+                        const reason = document.getElementById('rejectReason').value;
+                        if (!reason) {
+                            Swal.showValidationMessage('Please enter a rejection reason');
+                        }
+                        return reason;
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = `/ex-electrician/office-assistant/${appId}/reject`;
+                        form.innerHTML = `
+                                    @csrf
+                                    <input type="hidden" name="reject_reason" value="${result.value}">
+                                `;
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
+                });
+            }
         </script>
     @endpush
 @endsection

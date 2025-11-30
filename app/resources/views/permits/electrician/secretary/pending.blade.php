@@ -23,6 +23,14 @@
                     </div>
                 </form>
 
+                {{-- Per-Page Selector --}}
+                <div class="d-flex justify-content-between align-items-center mb-3 mt-3">
+                    @include('components.per-page-selector')
+                    <div>
+                        <span class="text-muted">Total: <strong>{{ $applications->total() }}</strong> pending</span>
+                    </div>
+                </div>
+
                 <form id="bulkForm">
                     @csrf
                     <div class="mb-3">
@@ -63,6 +71,14 @@
                                                 class="btn btn-sm btn-primary">
                                                 <i class="fas fa-eye"></i> Review
                                             </a>
+                                            <button type="button" class="btn btn-sm btn-success"
+                                                onclick="singleApprove({{ $app->id }})">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-danger"
+                                                onclick="singleReject({{ $app->id }})">
+                                                <i class="fas fa-times"></i>
+                                            </button>
                                         </td>
                                     </tr>
                                 @empty
@@ -151,6 +167,62 @@
                     this.appendChild(input);
                 });
             });
+
+            // Single approve function
+            function singleApprove(appId) {
+                Swal.fire({
+                    title: 'Final Approval?',
+                    text: 'This will PERMANENTLY approve and lock this application.',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, Approve!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = `/ex-electrician/secretary/${appId}/approve`;
+                        form.innerHTML = '@csrf';
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
+                });
+            }
+
+            // Single reject function
+            function singleReject(appId) {
+                Swal.fire({
+                    title: 'Reject Application?',
+                    html: '<textarea id="rejectReason" class="swal2-textarea" placeholder="Enter rejection reason..." required></textarea>',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Reject',
+                    cancelButtonText: 'Cancel',
+                    preConfirm: () => {
+                        const reason = document.getElementById('rejectReason').value;
+                        if (!reason) {
+                            Swal.showValidationMessage('Please enter a rejection reason');
+                        }
+                        return reason;
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = `/ex-electrician/secretary/${appId}/reject`;
+                        form.innerHTML = `
+                                    @csrf
+                                    <input type="hidden" name="reject_reason" value="${result.value}">
+                                `;
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
+                });
+            }
         </script>
     @endpush
 @endsection

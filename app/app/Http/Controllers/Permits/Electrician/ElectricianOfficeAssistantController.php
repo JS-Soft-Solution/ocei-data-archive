@@ -34,7 +34,8 @@ class ElectricianOfficeAssistantController extends Controller
             $query->whereDate('created_at', '<=', $to);
         }
 
-        $applications = $query->latest()->paginate(20);
+        $perPage = $request->get('per_page', 25);
+        $applications = $query->latest()->paginate($perPage)->appends($request->except('page'));
 
         return view('permits.electrician.office-assistant.pending', compact('applications'));
     }

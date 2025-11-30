@@ -43,7 +43,7 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                             </div>
                         @endif
-                        
+
                         {{-- Search and Filter Form --}}
                         <form method="GET" action="{{ route('ex-electrician.operator.index') }}" class="mb-4">
                             <div class="row">
@@ -82,6 +82,15 @@
                                 </div>
                             </div>
                         </form>
+
+                        {{-- Per-Page Selector --}}
+                        <div class="d-flex justify-content-between align-items-center mb-3 mt-3">
+                            @include('components.per-page-selector')
+                            <div>
+                                <span class="text-muted">Total: <strong>{{ $applications->total() }}</strong>
+                                    applications</span>
+                            </div>
+                        </div>
 
                         {{-- Bulk Actions --}}
                         <form id="bulkSubmitForm" method="POST" action="{{ route('ex-electrician.operator.bulk-submit') }}">
