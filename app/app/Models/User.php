@@ -71,7 +71,7 @@ class User extends Authenticatable
 
         'mobile_no_err_letter',
         'email_err_letter',
-        ];
+    ];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -94,15 +94,23 @@ class User extends Authenticatable
      * @return array<string, string>
      */
     protected $casts = [
-        'dob'               => 'date',
+        'dob' => 'date',
         'email_verified_at' => 'datetime',
-        'deleted_at'        => 'datetime',
+        'deleted_at' => 'datetime',
 
         // Laravel 10+ will auto-hash when assigning:
         // $user->password = 'plain';
-        'password'          => 'hashed',
-    ];
+        'password' => 'hashed',
+    ]
+    ;
 
+    /**
+     * Get name attribute (accessor for full_name).
+     */
+    public function getNameAttribute()
+    {
+        return $this->full_name;
+    }
 
     public function isSuperAdmin()
     {
@@ -111,7 +119,8 @@ class User extends Authenticatable
 
     public function hasRole($role)
     {
-        if ($this->isSuperAdmin()) return true; // Super admin accesses everything
+        if ($this->isSuperAdmin())
+            return true; // Super admin accesses everything
 
         if (is_array($role)) {
             return in_array($this->admin_type, $role);

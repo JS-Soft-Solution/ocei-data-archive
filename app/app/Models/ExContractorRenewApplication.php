@@ -1,0 +1,256 @@
+<?php
+
+namespace App\Models;
+
+use App\Traits\HasAuditHistory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
+
+class ExContractorRenewApplication extends Model
+{
+    use HasFactory;
+    use SoftDeletes;
+    use HasAuditHistory;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'old_certificate_number',
+        'company_name_bn',
+        'company_name_en',
+        'owner_shareholder_name',
+        'company_type',
+        'mobile_no',
+        'email',
+        'representative_name',
+        'representative_designation',
+        'elb_certified_supervisor_no',
+        'supervisor_acknowledgement',
+        'boa_village',
+        'boa_road',
+        'boa_post_office',
+        'boa_post_code',
+        'boa_upozila',
+        'boa_district',
+        'boa_division',
+        'bra_village',
+        'bra_road',
+        'bra_post_office',
+        'bra_post_code',
+        'bra_upozila',
+        'bra_district',
+        'bra_division',
+        'company_registration_number',
+        'trade_license_number',
+        'village',
+        'post_office',
+        'postcode',
+        'upazilla',
+        'district',
+        'division',
+        'degree',
+        'et_serial_no',
+        'et_manufacturer_name',
+        'et_country_origin',
+        'mg_serial_no',
+        'mg_manufacturer_name',
+        'mg_country_origin',
+        'cm_serial_no',
+        'cm_manufacturer_name',
+        'cm_country_origin',
+        'certificate_number',
+        'issue_date',
+        'expiry_date',
+        'renewal_period',
+        'last_renewal_date',
+        'result',
+        'status',
+        'entry_by',
+        'entry_at',
+        'last_updated_by',
+        'last_updated_at',
+        'rejected_by',
+        'reject_reason',
+        'rejected_at',
+        'verified_by_office_assistant',
+        'verified_at_office_assistant',
+        'approved_by_secretary',
+        'approved_at_secretary',
+        'deleted_by',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'issue_date' => 'date',
+        'expiry_date' => 'date',
+        'last_renewal_date' => 'date',
+        'entry_at' => 'datetime',
+        'last_updated_at' => 'datetime',
+        'rejected_at' => 'datetime',
+        'verified_at_office_assistant' => 'datetime',
+        'approved_at_secretary' => 'datetime',
+        'postcode' => 'integer',
+        'boa_post_code' => 'integer',
+        'bra_post_code' => 'integer',
+        'renewal_period' => 'integer',
+        'supervisor_acknowledgement' => 'integer',
+    ];
+
+    /**
+     * Get attachments.
+     */
+    public function attachments(): MorphMany
+    {
+        return $this->morphMany(Attachment::class, 'attachable');
+    }
+
+    /**
+     * Get the user who created this entry.
+     */
+    public function entryBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'entry_by');
+    }
+
+    /**
+     * Get the user who last updated this entry.
+     */
+    public function lastUpdatedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'last_updated_by');
+    }
+
+    /**
+     * Get the user who rejected this entry.
+     */
+    public function rejectedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'rejected_by');
+    }
+
+    /**
+     * Get the office assistant who verified this entry.
+     */
+    public function verifiedByOfficeAssistant(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'verified_by_office_assistant');
+    }
+
+    /**
+     * Get the secretary who approved this entry.
+     */
+    public function approvedBySecretary(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'approved_by_secretary');
+    }
+
+    /**
+     * Get the user who deleted this entry.
+     */
+    public function deletedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'deleted_by');
+    }
+
+    /**
+     * Scope to filter by status.
+     */
+    public function scopeByStatus(Builder $query, string $status): Builder
+    {
+        return $query->where('status', $status);
+    }
+
+    /**
+     * Scope to filter by entry user.
+     */
+    public function scopeByEntryUser(Builder $query, int $userId): Builder
+    {
+        return $query->where('entry_by', $userId);
+    }
+
+    /**
+     * Scope to search by old certificate number or company name.
+     */
+    public function scopeSearch(Builder $query, ?string $search): Builder
+    {
+        if (empty($search)) {
+            return $query;
+        }
+
+        return $query->where(function ($q) use ($search) {
+            $q->where('old_certificate_number', 'like', "%{$search}%")
+                ->orWhere('company_name_en', 'like', "%{$search}%")
+                ->orWhere('company_name_bn', 'like', "%{$search}%")
+                ->orWhere('mobile_no', 'like', "%{$search}%")
+                ->orWhere('owner_shareholder_name', 'like', "%{$search}%");
+        });
+    }
+
+    /**
+     * Check if the record is locked (secretary approved final).
+     */
+    public function getIsLockedAttribute(): bool
+    {
+        return $this->status === 'secretary_approved_final';
+    }
+
+    /**
+     * Check if the record can be edited.
+     */
+    public function canBeEdited(): bool
+    {
+        return in_array($this->status, ['draft', 'office_assistant_rejected', 'secretary_rejected']);
+    }
+
+    /**
+     * Check if the record can be submitted.
+     */
+    public function canBeSubmitted(): bool
+    {
+        return in_array($this->status, ['draft', 'office_assistant_rejected', 'secretary_rejected'])
+            && $this->attachments()->count() > 0;
+    }
+
+    /**
+     * Get status badge color.
+     */
+    public function getStatusBadgeColorAttribute(): string
+    {
+        return match ($this->status) {
+            'draft' => 'secondary',
+            'submitted_to_office_assistant' => 'info',
+            'office_assistant_rejected' => 'warning',
+            'submitted_to_secretary' => 'primary',
+            'secretary_rejected' => 'danger',
+            'secretary_approved_final' => 'success',
+            default => 'secondary',
+        };
+    }
+
+    /**
+     * Get human-readable status.
+     */
+    public function getStatusLabelAttribute(): string
+    {
+        return match ($this->status) {
+            'draft' => 'Draft',
+            'submitted_to_office_assistant' => 'Submitted to Office Assistant',
+            'office_assistant_rejected' => 'Rejected by Office Assistant',
+            'submitted_to_secretary' => 'Submitted to Secretary',
+            'secretary_rejected' => 'Rejected by Secretary',
+            'secretary_approved_final' => 'Final Approved',
+            default => ucfirst(str_replace('_', ' ', $this->status)),
+        };
+    }
+}

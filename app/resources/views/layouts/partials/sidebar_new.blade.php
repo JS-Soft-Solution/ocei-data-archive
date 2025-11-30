@@ -31,7 +31,6 @@
                 </li>
 
                 {{-- USER MANAGEMENT SECTION --}}
-                {{-- Only visible to specific roles --}}
                 @if(auth()->check() && auth()->user()->hasRole(['super_admin']))
                     <li class="nav-item">
                         <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
@@ -50,8 +49,6 @@
                             </div>
                         </a>
                         <ul class="nav collapse {{ request()->is('users*') ? 'show' : '' }}" id="user-management">
-
-                            {{-- View User List --}}
                             <li class="nav-item">
                                 <a class="nav-link {{ request()->routeIs('users.index') ? 'active' : '' }}"
                                     href="{{ route('users.index') }}">
@@ -60,7 +57,6 @@
                                 </a>
                             </li>
 
-                            {{-- Create New User (Restricted to Super Admin) --}}
                             @if(auth()->user()->isSuperAdmin())
                                 <li class="nav-item">
                                     <a class="nav-link {{ request()->routeIs('users.create') ? 'active' : '' }}"
@@ -71,24 +67,6 @@
                                 </li>
                             @endif
                         </ul>
-                    </li>
-                @endif
-
-                {{-- DATA ENTRY SECTION (Example for other roles) --}}
-                @if(auth()->check() && auth()->user()->hasRole(['super_admin', 'data_entry_operator', 'office_assistant']))
-                    <li class="nav-item">
-                        <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
-                            <div class="col-auto navbar-vertical-label">Operations</div>
-                            <div class="col ps-0">
-                                <hr class="mb-0 navbar-vertical-divider" />
-                            </div>
-                        </div>
-                        <a class="nav-link" href="#" role="button">
-                            <div class="d-flex align-items-center">
-                                <span class="nav-link-icon"><span class="fas fa-database"></span></span>
-                                <span class="nav-link-text ps-1">Data Entry</span>
-                            </div>
-                        </a>
                     </li>
                 @endif
 
@@ -115,86 +93,37 @@
                             </div>
                         </a>
                         <ul class="nav collapse {{ request()->is('ex-electrician*') ? 'show' : '' }}" id="ex-electrician">
-                            @if(auth()->check() && auth()->user()->hasRole('data_entry_operator'))
+                            @if(auth()->user()->role === 'data_entry_operator')
                                 <li class="nav-item">
-                                    <a class="nav-link {{ request()->routeIs('ex-electrician.operator.index') ? 'active' : '' }}"
+                                    <a class="nav-link {{ request()->routeIs('ex-electrician.operator.*') ? 'active' : '' }}"
                                         href="{{ route('ex-electrician.operator.index') }}">
                                         <div class="d-flex align-items-center"><span class="nav-link-text ps-1">My
                                                 Applications</span></div>
                                     </a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link {{ request()->routeIs('ex-electrician.operator.pending') ? 'active' : '' }}"
-                                        href="{{ route('ex-electrician.operator.pending') }}">
-                                        <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Pending
-                                                Approval</span></div>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link {{ request()->routeIs('ex-electrician.operator.rejected') ? 'active' : '' }}"
-                                        href="{{ route('ex-electrician.operator.rejected') }}">
-                                        <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Rejected
-                                                Applications</span></div>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link {{ request()->routeIs('ex-electrician.operator.approved') ? 'active' : '' }}"
-                                        href="{{ route('ex-electrician.operator.approved') }}">
-                                        <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Approved
-                                                Applications</span></div>
-                                    </a>
-                                </li>
                             @endif
 
-                            @if(auth()->check() && auth()->user()->hasRole('office_assistant'))
+                            @if(auth()->user()->role === 'office_assistant')
                                 <li class="nav-item">
-                                    <a class="nav-link {{ request()->routeIs('ex-electrician.office-assistant.pending') ? 'active' : '' }}"
+                                    <a class="nav-link {{ request()->routeIs('ex-electrician.office-assistant.*') ? 'active' : '' }}"
                                         href="{{ route('ex-electrician.office-assistant.pending') }}">
                                         <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Pending
                                                 Review</span></div>
                                     </a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link {{ request()->routeIs('ex-electrician.office-assistant.rejected') ? 'active' : '' }}"
-                                        href="{{ route('ex-electrician.office-assistant.rejected') }}">
-                                        <div class="d-flex align-items-center"><span class="nav-link-text ps-1">My
-                                                Rejected</span></div>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link {{ request()->routeIs('ex-electrician.office-assistant.approved') ? 'active' : '' }}"
-                                        href="{{ route('ex-electrician.office-assistant.approved') }}">
-                                        <div class="d-flex align-items-center"><span class="nav-link-text ps-1">My
-                                                Approved</span></div>
-                                    </a>
-                                </li>
                             @endif
 
-                            @if(auth()->check() && auth()->user()->hasRole('secretary'))
+                            @if(auth()->user()->role === 'secretary')
                                 <li class="nav-item">
-                                    <a class="nav-link {{ request()->routeIs('ex-electrician.secretary.pending') ? 'active' : '' }}"
+                                    <a class="nav-link {{ request()->routeIs('ex-electrician.secretary.*') ? 'active' : '' }}"
                                         href="{{ route('ex-electrician.secretary.pending') }}">
-                                        <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Pending Final
+                                        <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Final
                                                 Approval</span></div>
                                     </a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link {{ request()->routeIs('ex-electrician.secretary.rejected') ? 'active' : '' }}"
-                                        href="{{ route('ex-electrician.secretary.rejected') }}">
-                                        <div class="d-flex align-items-center"><span class="nav-link-text ps-1">My
-                                                Rejected</span></div>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link {{ request()->routeIs('ex-electrician.secretary.approved') ? 'active' : '' }}"
-                                        href="{{ route('ex-electrician.secretary.approved') }}">
-                                        <div class="d-flex align-items-center"><span class="nav-link-text ps-1">My
-                                                Approved</span></div>
-                                    </a>
-                                </li>
                             @endif
 
-                            @if(auth()->check() && auth()->user()->hasRole('chairman'))
+                            @if(auth()->user()->role === 'chairman')
                                 <li class="nav-item">
                                     <a class="nav-link {{ request()->routeIs('ex-electrician.chairman.*') ? 'active' : '' }}"
                                         href="{{ route('ex-electrician.chairman.index') }}">
@@ -204,7 +133,7 @@
                                 </li>
                             @endif
 
-                            @if(auth()->check() && auth()->user()->hasRole('super_admin'))
+                            @if(auth()->user()->role === 'super_admin')
                                 <li class="nav-item">
                                     <a class="nav-link {{ request()->routeIs('ex-electrician.admin.*') ? 'active' : '' }}"
                                         href="{{ route('ex-electrician.admin.index') }}">
@@ -214,7 +143,7 @@
                                 </li>
                             @endif
 
-                            @if(auth()->check() && auth()->user()->hasRole(['super_admin', 'chairman', 'secretary']))
+                            @if(in_array(auth()->user()->role, ['super_admin', 'chairman', 'secretary']))
                                 <li class="nav-item">
                                     <a class="nav-link {{ request()->routeIs('ex-electrician.reports.*') ? 'active' : '' }}"
                                         href="{{ route('ex-electrician.reports.index') }}">
@@ -237,7 +166,7 @@
                             </div>
                         </a>
                         <ul class="nav collapse {{ request()->is('ex-supervisor*') ? 'show' : '' }}" id="ex-supervisor">
-                            @if(auth()->check() && auth()->user()->hasRole('data_entry_operator'))
+                            @if(auth()->user()->role === 'data_entry_operator')
                                 <li class="nav-item">
                                     <a class="nav-link {{ request()->routeIs('ex-supervisor.operator.*') ? 'active' : '' }}"
                                         href="{{ route('ex-supervisor.operator.index') }}">
@@ -260,7 +189,7 @@
                             </div>
                         </a>
                         <ul class="nav collapse {{ request()->is('ex-contractor*') ? 'show' : '' }}" id="ex-contractor">
-                            @if(auth()->check() && auth()->user()->hasRole('data_entry_operator'))
+                            @if(auth()->user()->role === 'data_entry_operator')
                                 <li class="nav-item">
                                     <a class="nav-link {{ request()->routeIs('ex-contractor.operator.*') ? 'active' : '' }}"
                                         href="{{ route('ex-contractor.operator.index') }}">
@@ -272,6 +201,7 @@
                         </ul>
                     </li>
                 @endif
+
             </ul>
         </div>
     </div>

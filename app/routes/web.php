@@ -58,4 +58,7 @@ Route::middleware(['auth'])->group(function () {
         });
     });
 
+    // Legacy Permits Module Routes
+    require __DIR__ . '/legacy_permits.php';
+
 });
