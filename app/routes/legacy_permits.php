@@ -9,7 +9,17 @@ use App\Http\Controllers\Permits\Electrician\ElectricianChairmanController;
 use App\Http\Controllers\Permits\Electrician\ElectricianAdminController;
 use App\Http\Controllers\Permits\Electrician\ElectricianReportController;
 use App\Http\Controllers\Permits\Supervisor\SupervisorOperatorController;
+use App\Http\Controllers\Permits\Supervisor\SupervisorOfficeAssistantController;
+use App\Http\Controllers\Permits\Supervisor\SupervisorSecretaryController;
+use App\Http\Controllers\Permits\Supervisor\SupervisorChairmanController;
+use App\Http\Controllers\Permits\Supervisor\SupervisorAdminController;
+use App\Http\Controllers\Permits\Supervisor\SupervisorReportController;
 use App\Http\Controllers\Permits\Contractor\ContractorOperatorController;
+use App\Http\Controllers\Permits\Contractor\ContractorOfficeAssistantController;
+use App\Http\Controllers\Permits\Contractor\ContractorSecretaryController;
+use App\Http\Controllers\Permits\Contractor\ContractorChairmanController;
+use App\Http\Controllers\Permits\Contractor\ContractorAdminController;
+use App\Http\Controllers\Permits\Contractor\ContractorReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -96,32 +106,140 @@ Route::middleware(['auth'])->group(function () {
     // ========== SUPERVISOR PERMIT ROUTES ==========
     // (Following same pattern as Electrician - 45+ routes)
 
+    // Data Entry Operator Routes
     Route::prefix('ex-supervisor/operator')->name('ex-supervisor.operator.')->group(function () {
         Route::get('/', [SupervisorOperatorController::class, 'index'])->name('index');
+        Route::get('/pending', [SupervisorOperatorController::class, 'pending'])->name('pending');
+        Route::get('/rejected', [SupervisorOperatorController::class, 'rejected'])->name('rejected');
+        Route::get('/approved', [SupervisorOperatorController::class, 'approved'])->name('approved');
         Route::get('/create', [SupervisorOperatorController::class, 'create'])->name('create');
         Route::post('/', [SupervisorOperatorController::class, 'store'])->name('store');
         Route::get('/{application}/edit', [SupervisorOperatorController::class, 'edit'])->name('edit');
+        Route::get('/{application}', [SupervisorOperatorController::class, 'show'])->name('show');
         Route::put('/{application}', [SupervisorOperatorController::class, 'update'])->name('update');
+        Route::post('/{application}/save-tab', [SupervisorOperatorController::class, 'saveTab'])->name('save-tab');
         Route::post('/{application}/submit', [SupervisorOperatorController::class, 'submit'])->name('submit');
+        Route::post('/bulk-submit', [SupervisorOperatorController::class, 'bulkSubmit'])->name('bulk-submit');
+        Route::post('/claim', [SupervisorOperatorController::class, 'claim'])->name('claim');
+        Route::delete('/{application}', [SupervisorOperatorController::class, 'destroy'])->name('destroy');
     });
 
-    // Additional Supervisor routes would follow same pattern...
-    // (Office Assistant, Secretary, Chairman, Admin, Reports - total ~45 routes)
+    // Office Assistant Routes
+    Route::prefix('ex-supervisor/office-assistant')->name('ex-supervisor.office-assistant.')->group(function () {
+        Route::get('/pending', [SupervisorOfficeAssistantController::class, 'pending'])->name('pending');
+        Route::get('/rejected', [SupervisorOfficeAssistantController::class, 'rejected'])->name('rejected');
+        Route::get('/approved', [SupervisorOfficeAssistantController::class, 'approved'])->name('approved');
+        Route::get('/{application}', [SupervisorOfficeAssistantController::class, 'show'])->name('show');
+        Route::post('/{application}/approve', [SupervisorOfficeAssistantController::class, 'approve'])->name('approve');
+        Route::post('/{application}/reject', [SupervisorOfficeAssistantController::class, 'reject'])->name('reject');
+        Route::post('/bulk-approve', [SupervisorOfficeAssistantController::class, 'bulkApprove'])->name('bulk-approve');
+        Route::post('/bulk-reject', [SupervisorOfficeAssistantController::class, 'bulkReject'])->name('bulk-reject');
+    });
+
+    // Secretary Routes
+    Route::prefix('ex-supervisor/secretary')->name('ex-supervisor.secretary.')->group(function () {
+        Route::get('/pending', [SupervisorSecretaryController::class, 'pending'])->name('pending');
+        Route::get('/rejected', [SupervisorSecretaryController::class, 'rejected'])->name('rejected');
+        Route::get('/approved', [SupervisorSecretaryController::class, 'approved'])->name('approved');
+        Route::get('/{application}', [SupervisorSecretaryController::class, 'show'])->name('show');
+        Route::post('/{application}/approve', [SupervisorSecretaryController::class, 'approve'])->name('approve');
+        Route::post('/{application}/reject', [SupervisorSecretaryController::class, 'reject'])->name('reject');
+        Route::post('/bulk-approve', [SupervisorSecretaryController::class, 'bulkApprove'])->name('bulk-approve');
+        Route::post('/bulk-reject', [SupervisorSecretaryController::class, 'bulkReject'])->name('bulk-reject');
+    });
+
+    // Chairman Routes
+    Route::prefix('ex-supervisor/chairman')->name('ex-supervisor.chairman.')->group(function () {
+        Route::get('/', [SupervisorChairmanController::class, 'index'])->name('index');
+        Route::get('/{application}', [SupervisorChairmanController::class, 'show'])->name('show');
+    });
+
+    // Report Routes
+    Route::prefix('ex-supervisor/reports')->name('ex-supervisor.reports.')->group(function () {
+        Route::get('/', [SupervisorReportController::class, 'index'])->name('index');
+        Route::get('/preview', [SupervisorReportController::class, 'preview'])->name('preview');
+        Route::get('/export-excel', [SupervisorReportController::class, 'exportExcel'])->name('export-excel');
+        Route::get('/export-pdf', [SupervisorReportController::class, 'exportPdf'])->name('export-pdf');
+    });
+
+    // Super Admin Routes
+    Route::prefix('ex-supervisor/admin')->name('ex-supervisor.admin.')->group(function () {
+        Route::get('/', [SupervisorAdminController::class, 'index'])->name('index');
+        Route::get('/{application}/edit', [SupervisorAdminController::class, 'edit'])->name('edit');
+        Route::put('/{application}', [SupervisorAdminController::class, 'update'])->name('update');
+        Route::delete('/{application}', [SupervisorAdminController::class, 'destroy'])->name('destroy');
+        Route::post('/{id}/restore', [SupervisorAdminController::class, 'restore'])->name('restore');
+        Route::post('/{application}/change-status', [SupervisorAdminController::class, 'changeStatus'])->name('change-status');
+    });
 
     // ========== CONTRACTOR PERMIT ROUTES ==========
     // (Following same pattern as Electrician - 45+ routes)
 
+    // Data Entry Operator Routes
     Route::prefix('ex-contractor/operator')->name('ex-contractor.operator.')->group(function () {
         Route::get('/', [ContractorOperatorController::class, 'index'])->name('index');
+        Route::get('/pending', [ContractorOperatorController::class, 'pending'])->name('pending');
+        Route::get('/rejected', [ContractorOperatorController::class, 'rejected'])->name('rejected');
+        Route::get('/approved', [ContractorOperatorController::class, 'approved'])->name('approved');
         Route::get('/create', [ContractorOperatorController::class, 'create'])->name('create');
         Route::post('/', [ContractorOperatorController::class, 'store'])->name('store');
         Route::get('/{application}/edit', [ContractorOperatorController::class, 'edit'])->name('edit');
+        Route::get('/{application}', [ContractorOperatorController::class, 'show'])->name('show');
         Route::put('/{application}', [ContractorOperatorController::class, 'update'])->name('update');
+        Route::post('/{application}/save-tab', [ContractorOperatorController::class, 'saveTab'])->name('save-tab');
         Route::post('/{application}/submit', [ContractorOperatorController::class, 'submit'])->name('submit');
+        Route::post('/bulk-submit', [ContractorOperatorController::class, 'bulkSubmit'])->name('bulk-submit');
+        Route::post('/claim', [ContractorOperatorController::class, 'claim'])->name('claim');
+        Route::delete('/{application}', [ContractorOperatorController::class, 'destroy'])->name('destroy');
     });
 
-    // Additional Contractor routes would follow same pattern...
-    // (Office Assistant, Secretary, Chairman, Admin, Reports - total ~45 routes)
+    // Office Assistant Routes
+    Route::prefix('ex-contractor/office-assistant')->name('ex-contractor.office-assistant.')->group(function () {
+        Route::get('/pending', [ContractorOfficeAssistantController::class, 'pending'])->name('pending');
+        Route::get('/rejected', [ContractorOfficeAssistantController::class, 'rejected'])->name('rejected');
+        Route::get('/approved', [ContractorOfficeAssistantController::class, 'approved'])->name('approved');
+        Route::get('/{application}', [ContractorOfficeAssistantController::class, 'show'])->name('show');
+        Route::post('/{application}/approve', [ContractorOfficeAssistantController::class, 'approve'])->name('approve');
+        Route::post('/{application}/reject', [ContractorOfficeAssistantController::class, 'reject'])->name('reject');
+        Route::post('/bulk-approve', [ContractorOfficeAssistantController::class, 'bulkApprove'])->name('bulk-approve');
+        Route::post('/bulk-reject', [ContractorOfficeAssistantController::class, 'bulkReject'])->name('bulk-reject');
+    });
+
+    // Secretary Routes
+    Route::prefix('ex-contractor/secretary')->name('ex-contractor.secretary.')->group(function () {
+        Route::get('/pending', [ContractorSecretaryController::class, 'pending'])->name('pending');
+        Route::get('/rejected', [ContractorSecretaryController::class, 'rejected'])->name('rejected');
+        Route::get('/approved', [ContractorSecretaryController::class, 'approved'])->name('approved');
+        Route::get('/{application}', [ContractorSecretaryController::class, 'show'])->name('show');
+        Route::post('/{application}/approve', [ContractorSecretaryController::class, 'approve'])->name('approve');
+        Route::post('/{application}/reject', [ContractorSecretaryController::class, 'reject'])->name('reject');
+        Route::post('/bulk-approve', [ContractorSecretaryController::class, 'bulkApprove'])->name('bulk-approve');
+        Route::post('/bulk-reject', [ContractorSecretaryController::class, 'bulkReject'])->name('bulk-reject');
+    });
+
+    // Chairman Routes
+    Route::prefix('ex-contractor/chairman')->name('ex-contractor.chairman.')->group(function () {
+        Route::get('/', [ContractorChairmanController::class, 'index'])->name('index');
+        Route::get('/{application}', [ContractorChairmanController::class, 'show'])->name('show');
+    });
+
+    // Report Routes
+    Route::prefix('ex-contractor/reports')->name('ex-contractor.reports.')->group(function () {
+        Route::get('/', [ContractorReportController::class, 'index'])->name('index');
+        Route::get('/preview', [ContractorReportController::class, 'preview'])->name('preview');
+        Route::get('/export-excel', [ContractorReportController::class, 'exportExcel'])->name('export-excel');
+        Route::get('/export-pdf', [ContractorReportController::class, 'exportPdf'])->name('export-pdf');
+    });
+
+    // Super Admin Routes
+    Route::prefix('ex-contractor/admin')->name('ex-contractor.admin.')->group(function () {
+        Route::get('/', [ContractorAdminController::class, 'index'])->name('index');
+        Route::get('/{application}/edit', [ContractorAdminController::class, 'edit'])->name('edit');
+        Route::put('/{application}', [ContractorAdminController::class, 'update'])->name('update');
+        Route::delete('/{application}', [ContractorAdminController::class, 'destroy'])->name('destroy');
+        Route::post('/{id}/restore', [ContractorAdminController::class, 'restore'])->name('restore');
+        Route::post('/{application}/change-status', [ContractorAdminController::class, 'changeStatus'])->name('change-status');
+    });
 });
 
 /*

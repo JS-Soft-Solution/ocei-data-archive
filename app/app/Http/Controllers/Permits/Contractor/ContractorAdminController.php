@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\Permits\Electrician;
+namespace App\Http\Controllers\Permits\Contractor;
 
 use App\Http\Controllers\Controller;
-use App\Models\ExElectricianRenewApplication;
+use App\Models\ExContractorRenewApplication;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
-class ElectricianAdminController extends Controller
+class ContractorAdminController extends Controller
 {
     use AuthorizesRequests;
     /**
@@ -17,9 +17,9 @@ class ElectricianAdminController extends Controller
      */
     public function index(Request $request)
     {
-        $this->authorize('superAdminOverride', ExElectricianRenewApplication::class);
+        $this->authorize('superAdminOverride', ExContractorRenewApplication::class);
 
-        $query = ExElectricianRenewApplication::query();
+        $query = ExContractorRenewApplication::query();
 
         // Include soft deleted if requested
         if ($request->get('show_deleted') == '1') {
@@ -49,32 +49,32 @@ class ElectricianAdminController extends Controller
 
         // Statistics
         $statistics = [
-            'total' => ExElectricianRenewApplication::withTrashed()->count(),
-            'draft' => ExElectricianRenewApplication::where('status', 'draft')->count(),
-            'pending' => ExElectricianRenewApplication::whereIn('status', ['submitted_to_office_assistant', 'submitted_to_secretary'])->count(),
-            'approved' => ExElectricianRenewApplication::where('status', 'secretary_approved_final')->count(),
-            'rejected' => ExElectricianRenewApplication::whereIn('status', ['office_assistant_rejected', 'secretary_rejected'])->count(),
-            'deleted' => ExElectricianRenewApplication::onlyTrashed()->count(),
+            'total' => ExContractorRenewApplication::withTrashed()->count(),
+            'draft' => ExContractorRenewApplication::where('status', 'draft')->count(),
+            'pending' => ExContractorRenewApplication::whereIn('status', ['submitted_to_office_assistant', 'submitted_to_secretary'])->count(),
+            'approved' => ExContractorRenewApplication::where('status', 'secretary_approved_final')->count(),
+            'rejected' => ExContractorRenewApplication::whereIn('status', ['office_assistant_rejected', 'secretary_rejected'])->count(),
+            'deleted' => ExContractorRenewApplication::onlyTrashed()->count(),
         ];
 
-        return view('permits.electrician.admin.index', compact('applications', 'statistics'));
+        return view('permits.contractor.admin.index', compact('applications', 'statistics'));
     }
 
     /**
      * Show the form for editing (including locked records).
      */
-    public function edit(ExElectricianRenewApplication $application)
+    public function edit(ExContractorRenewApplication $application)
     {
-        $this->authorize('superAdminOverride', ExElectricianRenewApplication::class);
+        $this->authorize('superAdminOverride', ExContractorRenewApplication::class);
 
         $application->load('attachments');
 
-        return view('permits.electrician.admin.edit', compact('application'));
+        return view('permits.contractor.admin.edit', compact('application'));
     }
 
-    public function update(Request $request, ExElectricianRenewApplication $application)
+    public function update(Request $request, ExContractorRenewApplication $application)
     {
-        $this->authorize('superAdminOverride', ExElectricianRenewApplication::class);
+        $this->authorize('superAdminOverride', ExContractorRenewApplication::class);
 
         $validated = $this->validateApplication($request, $application);
 
@@ -110,7 +110,7 @@ class ElectricianAdminController extends Controller
     /**
      * Soft delete application.
      */
-    public function destroy(ExElectricianRenewApplication $application)
+    public function destroy(ExContractorRenewApplication $application)
     {
         $this->authorize('delete', $application);
 
@@ -122,7 +122,7 @@ class ElectricianAdminController extends Controller
             DB::commit();
 
             return redirect()
-                ->route('ex-electrician.admin.index')
+                ->route('ex-contractor.admin.index')
                 ->with('success', 'Application soft deleted successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -135,7 +135,7 @@ class ElectricianAdminController extends Controller
      */
     public function restore($id)
     {
-        $application = ExElectricianRenewApplication::withTrashed()->findOrFail($id);
+        $application = ExContractorRenewApplication::withTrashed()->findOrFail($id);
 
         $this->authorize('restore', $application);
 
@@ -147,7 +147,7 @@ class ElectricianAdminController extends Controller
             DB::commit();
 
             return redirect()
-                ->route('ex-electrician.admin.index')
+                ->route('ex-contractor.admin.index')
                 ->with('success', 'Application restored successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -158,9 +158,9 @@ class ElectricianAdminController extends Controller
     /**
      * Change status (admin override).
      */
-    public function changeStatus(Request $request, ExElectricianRenewApplication $application)
+    public function changeStatus(Request $request, ExContractorRenewApplication $application)
     {
-        $this->authorize('superAdminOverride', ExElectricianRenewApplication::class);
+        $this->authorize('superAdminOverride', ExContractorRenewApplication::class);
 
         $request->validate([
             'new_status' => 'required|string|in:draft,submitted_to_office_assistant,office_assistant_rejected,submitted_to_secretary,secretary_rejected,secretary_approved_final',
@@ -194,10 +194,10 @@ class ElectricianAdminController extends Controller
     /**
      * Validate the application data.
      */
-    protected function validateApplication(Request $request, ExElectricianRenewApplication $application): array
+    protected function validateApplication(Request $request, ExContractorRenewApplication $application): array
     {
         return $request->validate([
-            'old_certificate_number' => 'required|string|max:100|unique:ex_electrician_renew_applications,old_certificate_number,' . $application->id,
+            'old_certificate_number' => 'required|string|max:100|unique:ex_contractor_renew_applications,old_certificate_number,' . $application->id,
             'applicant_name_bn' => 'nullable|string|max:255',
             'applicant_name_en' => 'nullable|string|max:255',
             'father_name' => 'nullable|string|max:255',

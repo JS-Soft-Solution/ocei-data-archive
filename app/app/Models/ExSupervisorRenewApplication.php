@@ -186,6 +186,14 @@ class ExSupervisorRenewApplication extends Model
     }
 
     /**
+     * Check if the record is locked (method form for views).
+     */
+    public function isLocked(): bool
+    {
+        return $this->status === 'secretary_approved_final';
+    }
+
+    /**
      * Check if the record can be edited.
      */
     public function canBeEdited(): bool
@@ -232,5 +240,32 @@ class ExSupervisorRenewApplication extends Model
             'secretary_approved_final' => 'Final Approved',
             default => ucfirst(str_replace('_', ' ', $this->status)),
         };
+    }
+
+    /**
+     * Log super admin override for audit trail.
+     */
+    public function logSuperAdminOverride(array $changedFields, string $reason = ''): void
+    {
+        // This method logs admin overrides to the audit history
+        // Using the HasAuditHistory trait
+        $changes = [];
+        foreach ($changedFields as $field => $newValue) {
+            $oldValue = $this->getOriginal($field);
+            if ($oldValue != $newValue) {
+                $changes[$field] = [
+                    'old' => $oldValue,
+                    'new' => $newValue,
+                ];
+            }
+        }
+
+        if (!empty($changes)) {
+            $this->recordAuditHistory(
+                'super_admin_override',
+                $reason,
+                $changes
+            );
+        }
     }
 }
