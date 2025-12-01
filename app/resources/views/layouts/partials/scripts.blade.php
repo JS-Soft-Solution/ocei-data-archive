@@ -10,6 +10,7 @@
 <script src="{{ asset('vendors/lodash/lodash.min.js') }}"></script>
 <script src="{{ asset('vendors/list.js/list.min.js') }}"></script>
 <script src="{{ asset('assets/js/theme.js') }}"></script>
+<script src="{{ asset('assets/js/notifications.js') }}"></script>
 
 {{-- SweetAlert2 --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

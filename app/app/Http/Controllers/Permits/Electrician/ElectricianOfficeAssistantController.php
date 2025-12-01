@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Permits\Electrician;
 
 use App\Http\Controllers\Controller;
 use App\Models\ExElectricianRenewApplication;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -63,7 +64,9 @@ class ElectricianOfficeAssistantController extends Controller
             $query->whereDate('rejected_at', '<=', $to);
         }
 
-        $applications = $query->latest('rejected_at')->paginate(20);
+
+        $perPage = $request->get('per_page', 25);
+        $applications = $query->latest('rejected_at')->paginate($perPage)->appends($request->except('page'));
 
         return view('permits.electrician.office-assistant.rejected', compact('applications'));
     }
@@ -91,7 +94,9 @@ class ElectricianOfficeAssistantController extends Controller
             $query->whereDate('verified_at_office_assistant', '<=', $to);
         }
 
-        $applications = $query->latest('verified_at_office_assistant')->paginate(20);
+
+        $perPage = $request->get('per_page', 25);
+        $applications = $query->latest('verified_at_office_assistant')->paginate($perPage)->appends($request->except('page'));
 
         return view('permits.electrician.office-assistant.approved', compact('applications'));
     }
@@ -127,6 +132,10 @@ class ElectricianOfficeAssistantController extends Controller
 
             DB::commit();
 
+            // Create notifications
+            NotificationService::notifyApplicationForwardedToSecretary($application, 'electrician');
+            NotificationService::notifyApplicationApproved($application, 'electrician', 'Office Assistant');
+
             return redirect()
                 ->route('ex-electrician.office-assistant.pending')
                 ->with('success', 'Application approved and forwarded to Secretary.');
@@ -159,6 +168,9 @@ class ElectricianOfficeAssistantController extends Controller
             ]);
 
             DB::commit();
+
+            // Create notification for data entry operator
+            NotificationService::notifyApplicationRejected($application, 'electrician', 'Office Assistant', $request->reject_reason);
 
             return redirect()
                 ->route('ex-electrician.office-assistant.pending')

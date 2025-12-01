@@ -34,15 +34,28 @@ Route::middleware('guest')->group(function () {
 //Route::get('/', function () {
 //    return view('dashboard');
 //})->name('dashboard');
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\NotificationController;
+
 Route::middleware(['auth'])->group(function () {
 
     // Password Change Routes
     Route::get('/change-password', [ChangePasswordController::class, 'edit'])->name('password.change');
     Route::put('/change-password', [ChangePasswordController::class, 'update'])->name('password.update');
 
-    Route::get('/', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Notification Routes
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/unread-count', [NotificationController::class, 'getUnreadCount'])->name('notifications.unread-count');
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
+    Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
+
+    // Debug route (remove in production)
+    Route::get('/notifications/debug', function () {
+        return view('notifications.debug');
+    })->name('notifications.debug');
 
     // Example: Routes only for Super Admin
     Route::middleware(['role:super_admin'])->group(function () {

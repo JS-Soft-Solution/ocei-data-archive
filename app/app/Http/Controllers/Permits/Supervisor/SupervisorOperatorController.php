@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Permits\Supervisor;
 
 use App\Http\Controllers\Controller;
 use App\Models\ExSupervisorRenewApplication;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -63,7 +64,8 @@ class SupervisorOperatorController extends Controller
             $query->search($search);
         }
 
-        $applications = $query->latest()->paginate(20);
+        $perPage = $request->get('per_page', 25);
+        $applications = $query->latest()->paginate($perPage)->appends($request->except('page'));
 
         return view('permits.supervisor.operator.pending', compact('applications'));
     }
@@ -84,7 +86,8 @@ class SupervisorOperatorController extends Controller
             $query->search($search);
         }
 
-        $applications = $query->latest('updated_at')->paginate(20);
+        $perPage = $request->get('per_page', 25);
+        $applications = $query->latest('updated_at')->paginate($perPage)->appends($request->except('page'));
 
         return view('permits.supervisor.operator.rejected', compact('applications'));
     }
@@ -113,7 +116,8 @@ class SupervisorOperatorController extends Controller
             $query->whereDate('approved_at_secretary', '<=', $to);
         }
 
-        $applications = $query->latest('approved_at_secretary')->paginate(20);
+        $perPage = $request->get('per_page', 25);
+        $applications = $query->latest('approved_at_secretary')->paginate($perPage)->appends($request->except('page'));
 
         return view('permits.supervisor.operator.approved', compact('applications'));
     }
@@ -283,6 +287,9 @@ class SupervisorOperatorController extends Controller
             $application->refresh();
 
             DB::commit();
+
+            // Create notification for recipient (Office Assistant or Secretary)
+            NotificationService::notifyApplicationSubmitted($application, 'supervisor');
 
             \Log::info('Submit successful', [
                 'application_id' => $application->id,

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Permits\Electrician;
 
 use App\Http\Controllers\Controller;
 use App\Models\ExElectricianRenewApplication;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -45,7 +46,9 @@ class ElectricianAdminController extends Controller
             $query->whereDate('created_at', '<=', $to);
         }
 
-        $applications = $query->latest()->paginate(20);
+
+        $perPage = $request->get('per_page', 25);
+        $applications = $query->latest()->paginate($perPage)->appends($request->except('page'));
 
         // Statistics
         $statistics = [
@@ -183,6 +186,40 @@ class ElectricianAdminController extends Controller
             );
 
             DB::commit();
+
+            // Notify data entry operator about status change by admin
+            if ($application->entry_by) {
+                $statusMessage = match ($request->new_status) {
+                    'secretary_approved_final' => 'approved',
+                    'office_assistant_rejected', 'secretary_rejected' => 'rejected',
+                    default => 'updated'
+                };
+
+                if ($statusMessage === 'approved') {
+                    NotificationService::notifyApplicationApproved($application, 'electrician', 'Admin');
+                } elseif ($statusMessage === 'rejected') {
+                    NotificationService::notifyApplicationRejected($application, 'electrician', 'Admin', $request->reason);
+                } else {
+                    \App\Models\Notification::create([
+                        'user_id' => $application->entry_by,
+                        'type' => 'application_submitted',
+                        'title' => 'Application Status Changed',
+                        'message' => sprintf(
+                            'Admin has changed the status of your application %s (Electrician) to "%s". Reason: %s',
+                            $application->old_certificate_number,
+                            $request->new_status,
+                            $request->reason
+                        ),
+                        'data' => [
+                            'application_id' => $application->id,
+                            'permit_type' => 'electrician',
+                            'certificate_number' => $application->old_certificate_number,
+                            'old_status' => $oldStatus,
+                            'new_status' => $request->new_status,
+                        ],
+                    ]);
+                }
+            }
 
             return back()->with('success', 'Status changed successfully (Override logged).');
         } catch (\Exception $e) {

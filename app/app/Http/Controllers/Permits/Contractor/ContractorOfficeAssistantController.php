@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Permits\Contractor;
 
 use App\Http\Controllers\Controller;
 use App\Models\ExContractorRenewApplication;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -63,7 +64,8 @@ class ContractorOfficeAssistantController extends Controller
             $query->whereDate('rejected_at', '<=', $to);
         }
 
-        $applications = $query->latest('rejected_at')->paginate(20);
+        $perPage = $request->get('per_page', 25);
+        $applications = $query->latest('rejected_at')->paginate($perPage)->appends($request->except('page'));
 
         return view('permits.contractor.office-assistant.rejected', compact('applications'));
     }
@@ -91,7 +93,8 @@ class ContractorOfficeAssistantController extends Controller
             $query->whereDate('verified_at_office_assistant', '<=', $to);
         }
 
-        $applications = $query->latest('verified_at_office_assistant')->paginate(20);
+        $perPage = $request->get('per_page', 25);
+        $applications = $query->latest('verified_at_office_assistant')->paginate($perPage)->appends($request->except('page'));
 
         return view('permits.contractor.office-assistant.approved', compact('applications'));
     }
@@ -127,6 +130,10 @@ class ContractorOfficeAssistantController extends Controller
 
             DB::commit();
 
+            // Create notifications
+            NotificationService::notifyApplicationForwardedToSecretary($application, 'contractor');
+            NotificationService::notifyApplicationApproved($application, 'contractor', 'Office Assistant');
+
             return redirect()
                 ->route('ex-contractor.office-assistant.pending')
                 ->with('success', 'Application approved and forwarded to Secretary.');
@@ -159,6 +166,9 @@ class ContractorOfficeAssistantController extends Controller
             ]);
 
             DB::commit();
+
+            // Create notification for data entry operator
+            NotificationService::notifyApplicationRejected($application, 'contractor', 'Office Assistant', $request->reject_reason);
 
             return redirect()
                 ->route('ex-contractor.office-assistant.pending')

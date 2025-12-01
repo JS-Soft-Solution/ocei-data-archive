@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Permits\Supervisor;
 
 use App\Http\Controllers\Controller;
 use App\Models\ExSupervisorRenewApplication;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -129,6 +130,10 @@ class SupervisorOfficeAssistantController extends Controller
 
             DB::commit();
 
+            // Create notifications
+            NotificationService::notifyApplicationForwardedToSecretary($application, 'supervisor');
+            NotificationService::notifyApplicationApproved($application, 'supervisor', 'Office Assistant');
+
             return redirect()
                 ->route('ex-supervisor.office-assistant.pending')
                 ->with('success', 'Application approved and forwarded to Secretary.');
@@ -161,6 +166,9 @@ class SupervisorOfficeAssistantController extends Controller
             ]);
 
             DB::commit();
+
+            // Create notification for data entry operator
+            NotificationService::notifyApplicationRejected($application, 'supervisor', 'Office Assistant', $request->reject_reason);
 
             return redirect()
                 ->route('ex-supervisor.office-assistant.pending')

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Permits\Supervisor;
 
 use App\Http\Controllers\Controller;
 use App\Models\ExSupervisorRenewApplication;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -63,7 +64,8 @@ class SupervisorSecretaryController extends Controller
             $query->whereDate('rejected_at', '<=', $to);
         }
 
-        $applications = $query->latest('rejected_at')->paginate(20);
+        $applications = $query->latest('rejected_at')$perPage = request()->get("per_page", 25);
+        $applications = $query->latest()->paginate($perPage)->appends(request()->except("page"));
 
         return view('permits.supervisor.secretary.rejected', compact('applications'));
     }
@@ -91,7 +93,8 @@ class SupervisorSecretaryController extends Controller
             $query->whereDate('approved_at_secretary', '<=', $to);
         }
 
-        $applications = $query->latest('approved_at_secretary')->paginate(20);
+        $applications = $query->latest('approved_at_secretary')$perPage = request()->get("per_page", 25);
+        $applications = $query->latest()->paginate($perPage)->appends(request()->except("page"));
 
         return view('permits.supervisor.secretary.approved', compact('applications'));
     }
@@ -127,6 +130,9 @@ class SupervisorSecretaryController extends Controller
 
             DB::commit();
 
+            // Create notification for data entry operator
+            NotificationService::notifyApplicationApproved($application, 'supervisor', 'Secretary');
+
             return redirect()
                 ->route('ex-supervisor.secretary.pending')
                 ->with('success', 'Application APPROVED and LOCKED. No further edits allowed except by Super Admin.');
@@ -159,6 +165,9 @@ class SupervisorSecretaryController extends Controller
             ]);
 
             DB::commit();
+
+            // Create notification for data entry operator
+            NotificationService::notifyApplicationRejected($application, 'supervisor', 'Secretary', $request->reject_reason);
 
             return redirect()
                 ->route('ex-supervisor.secretary.pending')
