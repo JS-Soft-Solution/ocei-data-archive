@@ -11,9 +11,8 @@
                 data-bs-placement="left" title="Toggle Navigation"><span class="navbar-toggle-icon"><span
                         class="toggle-line"></span></span></button>
         </div><a class="navbar-brand" href="{{ url('/') }}">
-            <div class="d-flex align-items-center py-3"><img class="me-2"
-                    src="{{ asset('assets/img/icons/spot-illustrations/falcon.png') }}" alt="" width="40" /><span
-                    class="font-sans-serif text-primary">falcon</span></div>
+            <div class="d-flex align-items-center py-3"><img class="me-2" src="{{ asset('assets/img/ocei-logo.png') }}"
+                    alt="OCEI Logo" width="40" /><span class="font-sans-serif text-primary">OCEI</span></div>
         </a>
     </div>
     <div class="collapse navbar-collapse" id="navbarVerticalCollapse">
@@ -196,8 +195,20 @@
                                     <li class="nav-item">
                                         <a class="nav-link {{ request()->routeIs('ex-electrician.office-assistant.pending') ? 'active' : '' }}"
                                             href="{{ route('ex-electrician.office-assistant.pending') }}">
-                                            <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Pending
-                                                    Review</span></div>
+                                            <div class="d-flex align-items-center justify-content-between">
+                                                <span class="nav-link-text ps-1">Pending Review</span>
+                                                @php
+                                                    $pendingCount = \App\Models\Notification::where('user_id', auth()->id())
+                                                        ->whereNull('read_at')
+                                                        ->where('type', 'application_submitted')
+                                                        ->whereJsonContains('data->permit_type', 'electrician')
+                                                        ->count();
+                                                @endphp
+                                                @if($pendingCount > 0)
+                                                    <span
+                                                        class="badge badge-subtle-warning rounded-pill ms-2">{{ $pendingCount }}</span>
+                                                @endif
+                                            </div>
                                         </a>
                                     </li>
                                     <li class="nav-item">
@@ -220,8 +231,20 @@
                                     <li class="nav-item">
                                         <a class="nav-link {{ request()->routeIs('ex-electrician.secretary.pending') ? 'active' : '' }}"
                                             href="{{ route('ex-electrician.secretary.pending') }}">
-                                            <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Pending Final
-                                                    Approval</span></div>
+                                            <div class="d-flex align-items-center justify-content-between">
+                                                <span class="nav-link-text ps-1">Pending Final Approval</span>
+                                                @php
+                                                    $pendingCount = \App\Models\Notification::where('user_id', auth()->id())
+                                                        ->whereNull('read_at')
+                                                        ->where('type', 'application_submitted')
+                                                        ->whereJsonContains('data->permit_type', 'electrician')
+                                                        ->count();
+                                                @endphp
+                                                @if($pendingCount > 0)
+                                                    <span
+                                                        class="badge badge-subtle-warning rounded-pill ms-2">{{ $pendingCount }}</span>
+                                                @endif
+                                            </div>
                                         </a>
                                     </li>
                                     <li class="nav-item">

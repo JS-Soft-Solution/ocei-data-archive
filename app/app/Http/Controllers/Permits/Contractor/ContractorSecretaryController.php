@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Permits\Contractor;
 
 use App\Http\Controllers\Controller;
 use App\Models\ExContractorRenewApplication;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -63,7 +64,8 @@ class ContractorSecretaryController extends Controller
             $query->whereDate('rejected_at', '<=', $to);
         }
 
-        $applications = $query->latest('rejected_at')->paginate(20);
+        $perPage = $request->get('per_page', 25);
+        $applications = $query->latest('rejected_at')->paginate($perPage)->appends($request->except('page'));
 
         return view('permits.contractor.secretary.rejected', compact('applications'));
     }
@@ -91,7 +93,8 @@ class ContractorSecretaryController extends Controller
             $query->whereDate('approved_at_secretary', '<=', $to);
         }
 
-        $applications = $query->latest('approved_at_secretary')->paginate(20);
+        $perPage = $request->get('per_page', 25);
+        $applications = $query->latest('approved_at_secretary')->paginate($perPage)->appends($request->except('page'));
 
         return view('permits.contractor.secretary.approved', compact('applications'));
     }
@@ -127,6 +130,9 @@ class ContractorSecretaryController extends Controller
 
             DB::commit();
 
+            // Create notification for data entry operator
+            NotificationService::notifyApplicationApproved($application, 'contractor', 'Secretary');
+
             return redirect()
                 ->route('ex-contractor.secretary.pending')
                 ->with('success', 'Application APPROVED and LOCKED. No further edits allowed except by Super Admin.');
@@ -159,6 +165,9 @@ class ContractorSecretaryController extends Controller
             ]);
 
             DB::commit();
+
+            // Create notification for data entry operator
+            NotificationService::notifyApplicationRejected($application, 'contractor', 'Secretary', $request->reject_reason);
 
             return redirect()
                 ->route('ex-contractor.secretary.pending')

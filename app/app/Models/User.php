@@ -117,6 +117,12 @@ class User extends Authenticatable
         return $this->admin_type === 'super_admin' || $this->admin_type === 'system_admin';
     }
 
+    /**
+     * Check if the user has a specific role.
+     *
+     * @param string|array $role
+     * @return bool
+     */
     public function hasRole($role)
     {
         if ($this->isSuperAdmin())
@@ -126,5 +132,31 @@ class User extends Authenticatable
             return in_array($this->admin_type, $role);
         }
         return $this->admin_type === $role;
+    }
+
+    /**
+     * Get the user's notifications.
+     */
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class)->latest();
+    }
+
+    /**
+     * Get the user's unread notifications.
+     */
+    public function unreadNotifications()
+    {
+        return $this->hasMany(Notification::class)->whereNull('read_at')->latest();
+    }
+
+    /**
+     * Get unread notification count (no caching).
+     */
+    public function getUnreadNotificationCountAttribute(): int
+    {
+        return \App\Models\Notification::where('user_id', $this->id)
+            ->whereNull('read_at')
+            ->count();
     }
 }

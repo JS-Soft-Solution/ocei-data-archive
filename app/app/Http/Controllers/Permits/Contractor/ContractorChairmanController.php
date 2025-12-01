@@ -32,7 +32,8 @@ class ContractorChairmanController extends Controller
             $query->whereDate('approved_at_secretary', '<=', $to);
         }
 
-        $applications = $query->latest('approved_at_secretary')->paginate(20);
+        $perPage = $request->get('per_page', 25);
+        $applications = $query->latest('approved_at_secretary')->paginate($perPage)->appends($request->except('page'));
 
         return view('permits.contractor.chairman.index', compact('applications'));
     }

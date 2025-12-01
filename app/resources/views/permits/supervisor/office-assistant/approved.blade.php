@@ -31,6 +31,14 @@
                     </div>
                 </form>
 
+        {{-- Per-Page Selector --}}
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            @include('components.per-page-selector')
+            <div>
+                <span class="text-muted">Total: <strong>{{ $applications->total() }}</strong> applications</span>
+            </div>
+        </div>
+
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover">
                         <thead class="table-light">
