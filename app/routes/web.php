@@ -34,15 +34,15 @@ Route::middleware('guest')->group(function () {
 //Route::get('/', function () {
 //    return view('dashboard');
 //})->name('dashboard');
+use App\Http\Controllers\DashboardController;
+
 Route::middleware(['auth'])->group(function () {
 
     // Password Change Routes
     Route::get('/change-password', [ChangePasswordController::class, 'edit'])->name('password.change');
     Route::put('/change-password', [ChangePasswordController::class, 'update'])->name('password.update');
 
-    Route::get('/', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     // Example: Routes only for Super Admin
     Route::middleware(['role:super_admin'])->group(function () {
