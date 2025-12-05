@@ -35,6 +35,30 @@
                                 </small>
                             </div>
 
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="class" class="form-label">License Class</label>
+                                    <select class="form-select @error('class') is-invalid @enderror" id="class" name="class">
+                                        <option value="">Select Class</option>
+                                        <option value="C" {{ old('class') == 'C' ? 'selected' : '' }}>C</option>
+                                        <option value="BC" {{ old('class') == 'BC' ? 'selected' : '' }}>BC</option>
+                                        <option value="ABC" {{ old('class') == 'ABC' ? 'selected' : '' }}>ABC</option>
+                                    </select>
+                                    @error('class')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="book_number" class="form-label">Book/Registrar Number</label>
+                                    <input type="text" class="form-control @error('book_number') is-invalid @enderror"
+                                        id="book_number" name="book_number" value="{{ old('book_number') }}"
+                                        placeholder="Enter book or registrar number">
+                                    @error('book_number')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
                             <div class="mb-3">
                                 <label for="applicant_name_en" class="form-label">Applicant Name (English)</label>
                                 <input type="text" class="form-control @error('applicant_name_en') is-invalid @enderror"

@@ -48,6 +48,7 @@
                                 <th>Mobile</th>
                                 <th>Verified By (OA)</th>
                                 <th>Approval Date</th>
+                                <th>Attachments</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -59,6 +60,18 @@
                                     <td>{{ $app->mobile_no }}</td>
                                     <td>{{ $app->verifiedByOfficeAssistant?->full_name ?? 'N/A' }}</td>
                                     <td>{{ $app->approved_at_secretary?->format('Y-m-d H:i') }}</td>
+                                    <td>
+                                        @if($app->attachments()->count() > 0)
+                                            <a href="{{ route('attachments.preview', $app->attachments->first()) }}" 
+                                               target="_blank" 
+                                               class="btn btn-sm btn-outline-info"
+                                               title="Preview First Attachment">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
+                                    </td>
                                     <td>
                                         <a href="{{ route('ex-supervisor.secretary.show', $app) }}"
                                             class="btn btn-sm btn-info">

@@ -143,7 +143,13 @@
                                     <td>{{ $attachment->file_size_human }}</td>
                                     <td>{{ $attachment->uploadedBy?->name }}</td>
                                     <td>
-                                        <a href="{{ route('attachments.download', $attachment) }}" class="btn btn-sm btn-info"
+                                        @if(in_array($attachment->file_extension, ['pdf', 'jpg', 'jpeg', 'png', 'webp']))
+                                            <a href="{{ route('attachments.preview', $attachment) }}" 
+                                               class="btn btn-sm btn-info" target="_blank">
+                                                <i class="fas fa-eye"></i> Preview
+                                            </a>
+                                        @endif
+                                        <a href="{{ route('attachments.download', $attachment) }}" class="btn btn-sm btn-primary"
                                             target="_blank">
                                             <i class="fas fa-download"></i> Download
                                         </a>

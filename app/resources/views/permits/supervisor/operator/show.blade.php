@@ -32,6 +32,8 @@
                                 <div class="col-md-6">
                                     <p><strong>Old Certificate Number:</strong> {{ $application->old_certificate_number }}
                                     </p>
+                                    <p><strong>Class:</strong> {{ $application->class ?? 'N/A' }}</p>
+                                    <p><strong>Book Number:</strong> {{ $application->book_number ?? 'N/A' }}</p>
                                     <p><strong>Applicant Name (English):</strong>
                                         {{ $application->applicant_name_en ?? 'N/A' }}</p>
                                     <p><strong>Applicant Name (Bangla):</strong>

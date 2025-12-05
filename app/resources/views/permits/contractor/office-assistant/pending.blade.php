@@ -79,7 +79,16 @@
                                                 </td>
                                                 <td>{{ $app->mobile_no }}</td>
                                                 <td>{{ $app->nid_number }}</td>
-                                                <td><span class="badge bg-info">{{ $app->attachments->count() }} files</span>
+                                                <td>
+                                                    <span class="badge bg-info">{{ $app->attachments->count() }} files</span>
+                                                    @if($app->attachments->count() > 0)
+                                                        <a href="{{ route('attachments.preview', $app->attachments->first()) }}" 
+                                                           target="_blank" 
+                                                           class="btn btn-sm btn-outline-info ms-1"
+                                                           title="Preview First Attachment">
+                                                            <i class="fas fa-eye"></i>
+                                                        </a>
+                                                    @endif
                                                 </td>
                                                 <td>{{ $app->entryBy?->full_name }}</td>
                                                 <td>{{ $app->created_at->format('Y-m-d') }}</td>

@@ -49,6 +49,7 @@
                                 <th>Submitted By</th>
                                 <th>Current Status</th>
                                 <th>Verified Date</th>
+                                <th>Attachments</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -71,6 +72,18 @@
                                         @endif
                                     </td>
                                     <td>{{ $app->verified_at_office_assistant?->format('Y-m-d H:i') }}</td>
+                                    <td>
+                                        @if($app->attachments()->count() > 0)
+                                            <a href="{{ route('attachments.preview', $app->attachments->first()) }}" 
+                                               target="_blank" 
+                                               class="btn btn-sm btn-outline-info"
+                                               title="Preview First Attachment">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
+                                    </td>
                                     <td>
                                         <a href="{{ route('ex-contractor.office-assistant.show', $app) }}"
                                             class="btn btn-sm btn-info">

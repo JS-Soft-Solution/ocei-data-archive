@@ -96,6 +96,7 @@
                                 <th>Division</th>
                                 <th>Approved By</th>
                                 <th>Approved Date</th>
+                                <th>Attachments</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -112,6 +113,18 @@
                                     <td>{{ $app->division }}</td>
                                     <td>{{ $app->approvedBySecretary?->name }}</td>
                                     <td>{{ $app->approved_at_secretary?->format('Y-m-d') }}</td>
+                                    <td>
+                                        @if($app->attachments()->count() > 0)
+                                            <a href="{{ route('attachments.preview', $app->attachments->first()) }}" 
+                                               target="_blank" 
+                                               class="btn btn-sm btn-outline-info"
+                                               title="Preview First Attachment">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
+                                    </td>
                                     <td>
                                         <a href="{{ route('ex-supervisor.chairman.show', $app) }}"
                                             class="btn btn-sm btn-primary">

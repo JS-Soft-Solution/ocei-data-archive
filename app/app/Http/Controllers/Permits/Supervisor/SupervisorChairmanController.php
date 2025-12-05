@@ -32,8 +32,8 @@ class SupervisorChairmanController extends Controller
             $query->whereDate('approved_at_secretary', '<=', $to);
         }
 
-        $applications = $query->latest('approved_at_secretary')$perPage = request()->get("per_page", 25);
-        $applications = $query->latest()->paginate($perPage)->appends(request()->except("page"));
+        $perPage = request()->get("per_page", 25);
+        $applications = $query->latest('approved_at_secretary')->paginate($perPage)->appends(request()->except("page"));
 
         return view('permits.supervisor.chairman.index', compact('applications'));
     }

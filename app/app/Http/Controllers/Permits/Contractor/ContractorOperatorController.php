@@ -454,6 +454,8 @@ class ContractorOperatorController extends Controller
 
         return $request->validate([
             'old_certificate_number' => 'required|string|max:100|' . $uniqueRule,
+            'class' => 'nullable|string|max:10',
+            'book_number' => 'nullable|string|max:100',
             'applicant_name_bn' => 'nullable|string|max:255',
             'applicant_name_en' => 'nullable|string|max:255',
             'father_name' => 'nullable|string|max:255',
@@ -493,6 +495,8 @@ class ContractorOperatorController extends Controller
         return match ($tab) {
             1 => $request->validate([
                 'old_certificate_number' => 'required|string|max:100',
+                'class' => 'nullable|string|max:10',
+                'book_number' => 'nullable|string|max:100',
                 'applicant_name_bn' => 'nullable|string|max:255',
                 'applicant_name_en' => 'nullable|string|max:255',
                 'father_name' => 'nullable|string|max:255',

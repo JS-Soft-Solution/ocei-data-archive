@@ -49,6 +49,7 @@
                                 <th>Submitted By</th>
                                 <th>Rejected Date</th>
                                 <th>Reject Reason</th>
+                                <th>Attachments</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -65,6 +66,18 @@
                                             data-bs-target="#reasonModal{{ $app->id }}">
                                             <i class="fas fa-info-circle"></i> View Reason
                                         </button>
+                                    </td>
+                                    <td>
+                                        @if($app->attachments()->count() > 0)
+                                            <a href="{{ route('attachments.preview', $app->attachments->first()) }}" 
+                                               target="_blank" 
+                                               class="btn btn-sm btn-outline-info"
+                                               title="Preview First Attachment">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
                                     </td>
                                     <td>
                                         <a href="{{ route('ex-electrician.office-assistant.show', $app) }}"

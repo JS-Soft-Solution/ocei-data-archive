@@ -1,6 +1,6 @@
 {{-- Tab 1: Personal Information --}}
 <div class="row">
-    <div class="col-md-6 mb-3">
+    <div class="col-md-4 mb-3">
         <label for="old_certificate_number" class="form-label">Old Certificate Number <span
                 class="text-danger">*</span></label>
         <input type="text" class="form-control @error('old_certificate_number') is-invalid @enderror"
@@ -11,7 +11,29 @@
         @enderror
     </div>
 
-    <div class="col-md-6 mb-3">
+    <div class="col-md-4 mb-3">
+        <label for="class" class="form-label">License Class</label>
+        <select class="form-select @error('class') is-invalid @enderror" id="class" name="class">
+            <option value="">Select Class</option>
+            <option value="C" {{ old('class', $application->class) == 'C' ? 'selected' : '' }}>C</option>
+            <option value="BC" {{ old('class', $application->class) == 'BC' ? 'selected' : '' }}>BC</option>
+            <option value="ABC" {{ old('class', $application->class) == 'ABC' ? 'selected' : '' }}>ABC</option>
+        </select>
+        @error('class')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <label for="book_number" class="form-label">Book/Registrar Number</label>
+        <input type="text" class="form-control @error('book_number') is-invalid @enderror" id="book_number"
+            name="book_number" value="{{ old('book_number', $application->book_number) }}">
+        @error('book_number')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    </div>
+
+    <div class="col-md-12 mb-3">
         <label for="nid_number" class="form-label">NID Number</label>
         <input type="text" class="form-control @error('nid_number') is-invalid @enderror" id="nid_number"
             name="nid_number" value="{{ old('nid_number', $application->nid_number) }}">

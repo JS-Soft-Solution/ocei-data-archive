@@ -147,6 +147,12 @@
                                             target="_blank">
                                             <i class="fas fa-download"></i> Download
                                         </a>
+                                        @if(in_array(strtolower(pathinfo($attachment->path, PATHINFO_EXTENSION)), ['pdf', 'jpg', 'jpeg', 'png', 'webp']))
+                                            <a href="{{ route('attachments.preview', $attachment) }}" 
+                                               class="btn btn-sm btn-outline-primary ms-1" target="_blank">
+                                                <i class="fas fa-eye"></i> Preview
+                                            </a>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach
