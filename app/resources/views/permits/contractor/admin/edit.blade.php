@@ -141,6 +141,20 @@
                     <h5 class="border-bottom pb-2 mb-3 mt-4">Certificate Details</h5>
                     <div class="row">
                         <div class="col-md-4 mb-3">
+                            <label class="form-label">License Class</label>
+                            <select name="class" class="form-select">
+                                <option value="">Select Class</option>
+                                <option value="C" {{ old('class', $application->class) == 'C' ? 'selected' : '' }}>C</option>
+                                <option value="BC" {{ old('class', $application->class) == 'BC' ? 'selected' : '' }}>BC</option>
+                                <option value="ABC" {{ old('class', $application->class) == 'ABC' ? 'selected' : '' }}>ABC</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Book/Registrar Number</label>
+                            <input type="text" name="book_number" class="form-control"
+                                value="{{ old('book_number', $application->book_number) }}">
+                        </div>
+                        <div class="col-md-4 mb-3">
                             <label class="form-label">Certificate Number</label>
                             <input type="text" name="certificate_number" class="form-control"
                                 value="{{ old('certificate_number', $application->certificate_number) }}">

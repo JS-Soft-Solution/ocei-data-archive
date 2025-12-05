@@ -46,7 +46,8 @@ class SupervisorAdminController extends Controller
             $query->whereDate('created_at', '<=', $to);
         }
 
-        $applications = $query->latest()$perPage = request()->get("per_page", 25);
+        $applications = $query->latest();
+        $perPage = request()->get("per_page", 25);
         $applications = $query->latest()->paginate($perPage)->appends(request()->except("page"));
 
         // Statistics

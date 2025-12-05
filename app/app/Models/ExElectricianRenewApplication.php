@@ -23,6 +23,8 @@ class ExElectricianRenewApplication extends Model
      */
     protected $fillable = [
         'old_certificate_number',
+        'class',
+        'book_number',
         'applicant_name_bn',
         'applicant_name_en',
         'father_name',

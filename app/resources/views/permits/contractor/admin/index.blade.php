@@ -121,6 +121,8 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Certificate #</th>
+                                <th>Class</th>
+                                <th>Book #</th>
                                 <th>Applicant</th>
                                 <th>Entry By</th>
                                 <th>Status</th>
@@ -138,6 +140,8 @@
                                             <br><span class="badge bg-secondary"><i class="fas fa-trash"></i> Deleted</span>
                                         @endif
                                     </td>
+                                    <td>{{ $app->class }}</td>
+                                    <td>{{ $app->book_number }}</td>
                                     <td>{{ $app->applicant_name_en }}</td>
                                     <td>{{ $app->entryBy?->name ?? 'Unknown' }}</td>
                                     <td>

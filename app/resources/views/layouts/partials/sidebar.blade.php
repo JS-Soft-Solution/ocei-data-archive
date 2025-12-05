@@ -110,7 +110,7 @@
                             aria-controls="ex-electrician">
                             <div class="d-flex align-items-center">
                                 <span class="nav-link-icon"><span class="fas fa-bolt"></span></span>
-                                <span class="nav-link-text ps-1">Ex-Electrician</span>
+                                <span class="nav-link-text ps-1">Electrician Archived Data</span>
                             </div>
                         </a>
                         <ul class="nav collapse {{ request()->is('ex-electrician*') ? 'show' : '' }}" id="ex-electrician">
@@ -293,7 +293,7 @@
                             aria-controls="ex-supervisor">
                             <div class="d-flex align-items-center">
                                 <span class="nav-link-icon"><span class="fas fa-user-tie"></span></span>
-                                <span class="nav-link-text ps-1">Ex-Supervisor</span>
+                                <span class="nav-link-text ps-1">Supervisor Archived Data</span>
                             </div>
                         </a>
                         <ul class="nav collapse {{ request()->is('ex-supervisor*') ? 'show' : '' }}" id="ex-supervisor">
@@ -452,7 +452,7 @@
                             aria-controls="ex-contractor">
                             <div class="d-flex align-items-center">
                                 <span class="nav-link-icon"><span class="fas fa-hard-hat"></span></span>
-                                <span class="nav-link-text ps-1">Ex-Contractor</span>
+                                <span class="nav-link-text ps-1">Contractor Archived Data</span>
                             </div>
                         </a>
                         <ul class="nav collapse {{ request()->is('ex-contractor*') ? 'show' : '' }}" id="ex-contractor">

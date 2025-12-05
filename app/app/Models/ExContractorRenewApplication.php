@@ -23,6 +23,8 @@ class ExContractorRenewApplication extends Model
      */
     protected $fillable = [
         'old_certificate_number',
+        'class',
+        'book_number',
         'company_name_bn',
         'company_name_en',
         'owner_shareholder_name',
