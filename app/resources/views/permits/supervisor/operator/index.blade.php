@@ -47,44 +47,8 @@
                             </div>
                         @endif
 
-                        {{-- Search and Filter Form --}}
-                        <form method="GET" action="{{ route('ex-supervisor.operator.index') }}" class="mb-4">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <input type="text" name="search" class="form-control"
-                                        placeholder="Search (Certificate #, NID, Name)" value="{{ request('search') }}">
-                                </div>
-                                <div class="col-md-2">
-                                    <select name="status" class="form-control">
-                                        <option value="">All Statuses</option>
-                                        <option value="draft" {{ request('status') === 'draft' ? 'selected' : '' }}>Draft
-                                        </option>
-                                        <option value="submitted_to_office_assistant" {{ request('status') === 'submitted_to_office_assistant' ? 'selected' : '' }}>
-                                            Submitted to OA</option>
-                                        <option value="office_assistant_rejected" {{ request('status') === 'office_assistant_rejected' ? 'selected' : '' }}>Rejected by
-                                            OA</option>
-                                        <option value="submitted_to_secretary" {{ request('status') === 'submitted_to_secretary' ? 'selected' : '' }}>Submitted to
-                                            Secretary</option>
-                                        <option value="secretary_rejected" {{ request('status') === 'secretary_rejected' ? 'selected' : '' }}>Rejected by Secretary</option>
-                                        <option value="secretary_approved_final" {{ request('status') === 'secretary_approved_final' ? 'selected' : '' }}>Final
-                                            Approved</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                    <input type="date" name="date_from" class="form-control"
-                                        value="{{ request('date_from') }}" placeholder="From Date">
-                                </div>
-                                <div class="col-md-2">
-                                    <input type="date" name="date_to" class="form-control" value="{{ request('date_to') }}"
-                                        placeholder="To Date">
-                                </div>
-                                <div class="col-md-3">
-                                    <button type="submit" class="btn btn-info"><i class="fas fa-search"></i> Search</button>
-                                    <a href="{{ route('ex-supervisor.operator.index') }}"
-                                        class="btn btn-secondary">Clear</a>
-                                </div>
-                            </div>
-                        </form>
+                        {{-- Search and Filter Bar --}}
+                        <x-permit-filter-bar :show-status="true" />
 
                         {{-- Per-Page Selector --}}
                         <div class="d-flex justify-content-between align-items-center mb-3 mt-3">

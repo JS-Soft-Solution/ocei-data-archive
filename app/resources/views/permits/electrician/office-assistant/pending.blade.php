@@ -11,25 +11,8 @@
                     </div>
 
                     <div class="card-body">
-                        {{-- Search and Filter Form --}}
-                        <form method="GET" class="mb-4">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <input type="text" name="search" class="form-control" placeholder="Search"
-                                        value="{{ request('search') }}">
-                                </div>
-                                <div class="col-md-3">
-                                    <input type="date" name="date_from" class="form-control"
-                                        value="{{ request('date_from') }}">
-                                </div>
-                                <div class="col-md-3">
-                                    <input type="date" name="date_to" class="form-control" value="{{ request('date_to') }}">
-                                </div>
-                                <div class="col-md-2">
-                                    <button type="submit" class="btn btn-info w-100">Search</button>
-                                </div>
-                            </div>
-                        </form>
+                        {{-- Search and Filter Bar --}}
+                        <x-permit-filter-bar />
 
                         {{-- Per-Page Selector --}}
                         <div class="d-flex justify-content-between align-items-center mb-3 mt-3">

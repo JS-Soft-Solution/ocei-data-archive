@@ -54,7 +54,37 @@
                             </select>
                         </div>
 
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Book Number</label>
+                            <input type="text" name="book_number" class="form-control" placeholder="Book Number">
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Class</label>
+                            <select name="class" class="form-control">
+                                <option value="">All Classes</option>
+                                <option value="ক">ক</option>
+                                <option value="খ">খ</option>
+                                <option value="গ">গ</option>
+                                <option value="কখ">কখ</option>
+                                <option value="খগ">খগ</option>
+                                <option value="কখগ">কখগ</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Issue Year</label>
+                            <select name="year" class="form-control">
+                                <option value="">All Years</option>
+                                @for($y = (int) date('Y'); $y >= 1980; $y--)
+                                    <option value="{{ $y }}">{{ $y }}</option>
+                                @endfor
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
                             <label class="form-label">Search</label>
                             <input type="text" name="search" class="form-control"
                                 placeholder="Certificate #, NID, Name, Mobile">

@@ -22,25 +22,8 @@ class SupervisorOperatorController extends Controller
 
         $query = ExSupervisorRenewApplication::query()
             ->where('entry_by', Auth::id())
-            ->with(['attachments', 'entryBy']);
-
-        // Search functionality
-        if ($search = $request->get('search')) {
-            $query->search($search);
-        }
-
-        // Status filter
-        if ($status = $request->get('status')) {
-            $query->where('status', $status);
-        }
-
-        // Date range filter
-        if ($from = $request->get('date_from')) {
-            $query->whereDate('created_at', '>=', $from);
-        }
-        if ($to = $request->get('date_to')) {
-            $query->whereDate('created_at', '<=', $to);
-        }
+            ->with(['attachments', 'entryBy'])
+            ->filter($request);
 
         $perPage = $request->get('per_page', 25);
         $applications = $query->latest()->paginate($perPage)->appends($request->except('page'));
@@ -58,11 +41,8 @@ class SupervisorOperatorController extends Controller
         $query = ExSupervisorRenewApplication::query()
             ->where('entry_by', Auth::id())
             ->whereIn('status', ['submitted_to_office_assistant', 'submitted_to_secretary'])
-            ->with(['attachments', 'entryBy']);
-
-        if ($search = $request->get('search')) {
-            $query->search($search);
-        }
+            ->with(['attachments', 'entryBy'])
+            ->filter($request->except('status'));
 
         $perPage = $request->get('per_page', 25);
         $applications = $query->latest()->paginate($perPage)->appends($request->except('page'));
@@ -80,11 +60,8 @@ class SupervisorOperatorController extends Controller
         $query = ExSupervisorRenewApplication::query()
             ->where('entry_by', Auth::id())
             ->whereIn('status', ['office_assistant_rejected', 'secretary_rejected'])
-            ->with(['attachments', 'entryBy', 'rejectedBy']);
-
-        if ($search = $request->get('search')) {
-            $query->search($search);
-        }
+            ->with(['attachments', 'entryBy', 'rejectedBy'])
+            ->filter($request->except('status'));
 
         $perPage = $request->get('per_page', 25);
         $applications = $query->latest('updated_at')->paginate($perPage)->appends($request->except('page'));
@@ -102,19 +79,8 @@ class SupervisorOperatorController extends Controller
         $query = ExSupervisorRenewApplication::query()
             ->where('entry_by', Auth::id())
             ->where('status', 'secretary_approved_final')
-            ->with(['attachments', 'entryBy', 'approvedBySecretary', 'verifiedByOfficeAssistant']);
-
-        if ($search = $request->get('search')) {
-            $query->search($search);
-        }
-
-        // Date filter on approval date
-        if ($from = $request->get('date_from')) {
-            $query->whereDate('approved_at_secretary', '>=', $from);
-        }
-        if ($to = $request->get('date_to')) {
-            $query->whereDate('approved_at_secretary', '<=', $to);
-        }
+            ->with(['attachments', 'entryBy', 'approvedBySecretary', 'verifiedByOfficeAssistant'])
+            ->filter($request->except('status'), 'approved_at_secretary');
 
         $perPage = $request->get('per_page', 25);
         $applications = $query->latest('approved_at_secretary')->paginate($perPage)->appends($request->except('page'));

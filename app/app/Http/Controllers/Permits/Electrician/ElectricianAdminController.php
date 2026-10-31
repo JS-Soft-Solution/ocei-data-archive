@@ -29,22 +29,8 @@ class ElectricianAdminController extends Controller
             $query->withTrashed();
         }
 
-        // Search functionality
-        if ($search = $request->get('search')) {
-            $query->search($search);
-        }
-
-        // Status filter
-        if ($status = $request->get('status')) {
-            $query->where('status', $status);
-        }
-
-        if ($from = $request->get('date_from')) {
-            $query->whereDate('created_at', '>=', $from);
-        }
-        if ($to = $request->get('date_to')) {
-            $query->whereDate('created_at', '<=', $to);
-        }
+        // Apply filters (search, status, book_number, class, year, district, division, dates)
+        $query->filter($request);
 
 
         $perPage = $request->get('per_page', 25);

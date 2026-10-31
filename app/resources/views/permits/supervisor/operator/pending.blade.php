@@ -11,20 +11,8 @@
                     </div>
 
                     <div class="card-body">
-                        {{-- Search Form --}}
-                        <form method="GET" action="{{ route('ex-supervisor.operator.pending') }}" class="mb-4">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <input type="text" name="search" class="form-control"
-                                        placeholder="Search (Certificate #, NID, Name)" value="{{ request('search') }}">
-                                </div>
-                                <div class="col-md-3">
-                                    <button type="submit" class="btn btn-info"><i class="fas fa-search"></i> Search</button>
-                                    <a href="{{ route('ex-supervisor.operator.pending') }}"
-                                        class="btn btn-secondary">Clear</a>
-                                </div>
-                            </div>
-                        </form>
+                        {{-- Search and Filter Bar --}}
+                        <x-permit-filter-bar />
 
                         {{-- Applications Table --}}
         {{-- Per-Page Selector --}}
