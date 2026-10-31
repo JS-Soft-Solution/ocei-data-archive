@@ -24,6 +24,7 @@
 <script src="{{ asset('vendors/simplebar/simplebar.min.js') }}"></script>
 
 <link href="{{ asset('vendors/simplebar/simplebar.min.css') }}" rel="stylesheet">
+<link href="{{ asset('vendors/flatpickr/flatpickr.min.css') }}" rel="stylesheet">
 
 <!-- Falcon Theme CSS -->
 <link href="{{ asset('assets/css/theme-rtl.min.css') }}" rel="stylesheet" id="style-rtl">
