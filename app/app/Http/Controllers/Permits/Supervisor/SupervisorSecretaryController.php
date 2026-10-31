@@ -57,8 +57,8 @@ class SupervisorSecretaryController extends Controller
             ->with(['attachments', 'entryBy', 'verifiedByOfficeAssistant'])
             ->filter($request->except('status'), 'approved_at_secretary');
 
-        $applications = $query->latest('approved_at_secretary')$perPage = request()->get("per_page", 25);
-        $applications = $query->latest()->paginate($perPage)->appends(request()->except("page"));
+        $perPage = $request->get('per_page', 25);
+        $applications = $query->latest('approved_at_secretary')->paginate($perPage)->appends($request->except('page'));
 
         return view('permits.supervisor.secretary.approved', compact('applications'));
     }

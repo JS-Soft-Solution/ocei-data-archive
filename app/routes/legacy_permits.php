@@ -20,6 +20,7 @@ use App\Http\Controllers\Permits\Contractor\ContractorSecretaryController;
 use App\Http\Controllers\Permits\Contractor\ContractorChairmanController;
 use App\Http\Controllers\Permits\Contractor\ContractorAdminController;
 use App\Http\Controllers\Permits\Contractor\ContractorReportController;
+use App\Http\Controllers\Reports\KpiReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -245,6 +246,13 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/{application}', [ContractorAdminController::class, 'destroy'])->name('destroy');
         Route::post('/{id}/restore', [ContractorAdminController::class, 'restore'])->name('restore');
         Route::post('/{application}/change-status', [ContractorAdminController::class, 'changeStatus'])->name('change-status');
+    });
+
+    // ========== KPI & ANALYTICS REPORTS ==========
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('/kpi', [KpiReportController::class, 'kpi'])->name('kpi');
+        Route::get('/operator', [KpiReportController::class, 'operatorReport'])->name('operator');
+        Route::get('/office-assistant', [KpiReportController::class, 'officeAssistantReport'])->name('office-assistant');
     });
 });
 
