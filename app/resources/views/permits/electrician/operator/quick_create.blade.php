@@ -319,108 +319,192 @@
 
 @push('scripts')
 <script>
-    function setClass(val) {
-        document.getElementById('class').value = val;
-    }
+    // Expose global helpers for inline button onclick attributes
+    window.setClass = function(val) {
+        var classInput = document.getElementById('class');
+        if (classInput) {
+            classInput.value = val;
+            classInput.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+    };
 
-    function submitForm(action, isNext) {
-        document.getElementById('formActionInput').value = action;
+    window.submitForm = function(action, isNext) {
+        var form = document.getElementById('quickEntryForm');
+        var formActionInput = document.getElementById('formActionInput');
+        if (!form) return;
+
+        if (formActionInput) {
+            formActionInput.value = action;
+        }
+
         if (isNext) {
-            let nextInput = document.createElement('input');
+            var nextInput = document.createElement('input');
             nextInput.type = 'hidden';
             nextInput.name = 'save_and_next';
             nextInput.value = '1';
-            document.getElementById('quickEntryForm').appendChild(nextInput);
+            form.appendChild(nextInput);
         }
-        document.getElementById('quickEntryForm').submit();
-    }
 
-    // Client-side image & PDF preview and interactive controls
-    const docInput = document.getElementById('scannedDocumentInput');
-    const imgPreview = document.getElementById('scannedImagePreview');
-    const pdfFrame = document.getElementById('pdfPreviewFrame');
-    const placeholder = document.getElementById('uploadPlaceholder');
-    const toolbar = document.getElementById('viewerToolbar');
-    const container = document.getElementById('previewContainer');
+        form.submit();
+    };
 
-    let currentZoom = 1.0;
-    let currentRotate = 0;
-    let isPanning = false;
-    let startX = 0, startY = 0;
-    let translateX = 0, translateY = 0;
+    // Scoped interactive viewer and preview controller
+    (function () {
+        document.addEventListener('DOMContentLoaded', function () {
+            var docInput = document.getElementById('scannedDocumentInput');
+            var imgPreview = document.getElementById('scannedImagePreview');
+            var pdfFrame = document.getElementById('pdfPreviewFrame');
+            var placeholder = document.getElementById('uploadPlaceholder');
+            var toolbar = document.getElementById('viewerToolbar');
+            var scanBox = document.getElementById('previewContainer');
 
-    docInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
+            var currentZoom = 1.0;
+            var currentRotate = 0;
+            var isPanning = false;
+            var startX = 0, startY = 0;
+            var translateX = 0, translateY = 0;
 
-        const fileType = file.type;
-        const fileUrl = URL.createObjectURL(file);
+            function applyTransform() {
+                if (imgPreview) {
+                    imgPreview.style.transform = 'translate(' + translateX + 'px, ' + translateY + 'px) scale(' + currentZoom + ') rotate(' + currentRotate + 'deg)';
+                }
+            }
 
-        if (fileType === 'application/pdf') {
-            imgPreview.style.display = 'none';
-            placeholder.style.display = 'none';
-            toolbar.style.display = 'none';
-            pdfFrame.src = fileUrl;
-            pdfFrame.style.display = 'block';
-        } else {
-            pdfFrame.style.display = 'none';
-            placeholder.style.display = 'none';
-            toolbar.style.display = 'flex';
-            imgPreview.src = fileUrl;
-            imgPreview.style.display = 'block';
-            resetTransform();
-        }
-    });
+            function resetTransform() {
+                currentZoom = 1.0;
+                currentRotate = 0;
+                translateX = 0;
+                translateY = 0;
+                applyTransform();
+            }
 
-    function updateTransform() {
-        imgPreview.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentZoom}) rotate(${currentRotate}deg)`;
-    }
+            function loadFile(file) {
+                if (!file) return;
 
-    function resetTransform() {
-        currentZoom = 1.0;
-        currentRotate = 0;
-        translateX = 0;
-        translateY = 0;
-        updateTransform();
-    }
+                var fileName = file.name ? file.name.toLowerCase() : '';
+                var fileType = file.type || '';
+                var isPdf = fileType === 'application/pdf' || fileName.endsWith('.pdf');
+                var fileUrl = URL.createObjectURL(file);
 
-    document.getElementById('btnZoomIn').addEventListener('click', () => {
-        currentZoom = Math.min(currentZoom + 0.25, 4.0);
-        updateTransform();
-    });
+                if (isPdf) {
+                    if (imgPreview) imgPreview.style.display = 'none';
+                    if (placeholder) placeholder.style.display = 'none';
+                    if (toolbar) toolbar.style.display = 'none';
+                    if (pdfFrame) {
+                        pdfFrame.src = fileUrl;
+                        pdfFrame.style.display = 'block';
+                    }
+                } else {
+                    if (pdfFrame) {
+                        pdfFrame.style.display = 'none';
+                        pdfFrame.src = '';
+                    }
+                    if (placeholder) placeholder.style.display = 'none';
+                    if (toolbar) toolbar.style.display = 'flex';
+                    if (imgPreview) {
+                        imgPreview.src = fileUrl;
+                        imgPreview.style.display = 'block';
+                        resetTransform();
+                    }
+                }
+            }
 
-    document.getElementById('btnZoomOut').addEventListener('click', () => {
-        currentZoom = Math.max(currentZoom - 0.25, 0.5);
-        updateTransform();
-    });
+            if (docInput) {
+                docInput.addEventListener('change', function (e) {
+                    if (e.target.files && e.target.files[0]) {
+                        loadFile(e.target.files[0]);
+                    }
+                });
+            }
 
-    document.getElementById('btnRotate').addEventListener('click', () => {
-        currentRotate = (currentRotate + 90) % 360;
-        updateTransform();
-    });
+            var btnZoomIn = document.getElementById('btnZoomIn');
+            if (btnZoomIn) {
+                btnZoomIn.addEventListener('click', function () {
+                    currentZoom = Math.min(currentZoom + 0.25, 5.0);
+                    applyTransform();
+                });
+            }
 
-    document.getElementById('btnReset').addEventListener('click', resetTransform);
+            var btnZoomOut = document.getElementById('btnZoomOut');
+            if (btnZoomOut) {
+                btnZoomOut.addEventListener('click', function () {
+                    currentZoom = Math.max(currentZoom - 0.25, 0.4);
+                    applyTransform();
+                });
+            }
 
-    // Pan with mouse drag
-    container.addEventListener('mousedown', (e) => {
-        if (imgPreview.style.display === 'none') return;
-        isPanning = true;
-        startX = e.clientX - translateX;
-        startY = e.clientY - translateY;
-        container.style.cursor = 'grabbing';
-    });
+            var btnRotate = document.getElementById('btnRotate');
+            if (btnRotate) {
+                btnRotate.addEventListener('click', function () {
+                    currentRotate = (currentRotate + 90) % 360;
+                    applyTransform();
+                });
+            }
 
-    window.addEventListener('mousemove', (e) => {
-        if (!isPanning) return;
-        translateX = e.clientX - startX;
-        translateY = e.clientY - startY;
-        updateTransform();
-    });
+            var btnReset = document.getElementById('btnReset');
+            if (btnReset) {
+                btnReset.addEventListener('click', resetTransform);
+            }
 
-    window.addEventListener('mouseup', () => {
-        isPanning = false;
-        container.style.cursor = 'grab';
-    });
+            // Mouse wheel zoom
+            if (scanBox) {
+                scanBox.addEventListener('wheel', function (e) {
+                    if (imgPreview && imgPreview.style.display !== 'none') {
+                        e.preventDefault();
+                        if (e.deltaY < 0) {
+                            currentZoom = Math.min(currentZoom + 0.15, 5.0);
+                        } else {
+                            currentZoom = Math.max(currentZoom - 0.15, 0.4);
+                        }
+                        applyTransform();
+                    }
+                }, { passive: false });
+
+                // Mouse pan
+                scanBox.addEventListener('mousedown', function (e) {
+                    if (imgPreview && imgPreview.style.display !== 'none') {
+                        isPanning = true;
+                        startX = e.clientX - translateX;
+                        startY = e.clientY - translateY;
+                        scanBox.style.cursor = 'grabbing';
+                    }
+                });
+
+                // Drag and drop onto scan box
+                scanBox.addEventListener('dragover', function (e) {
+                    e.preventDefault();
+                    scanBox.classList.add('border-primary');
+                });
+
+                scanBox.addEventListener('dragleave', function () {
+                    scanBox.classList.remove('border-primary');
+                });
+
+                scanBox.addEventListener('drop', function (e) {
+                    e.preventDefault();
+                    scanBox.classList.remove('border-primary');
+                    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+                        if (docInput) {
+                            docInput.files = e.dataTransfer.files;
+                        }
+                        loadFile(e.dataTransfer.files[0]);
+                    }
+                });
+            }
+
+            window.addEventListener('mousemove', function (e) {
+                if (!isPanning) return;
+                translateX = e.clientX - startX;
+                translateY = e.clientY - startY;
+                applyTransform();
+            });
+
+            window.addEventListener('mouseup', function () {
+                isPanning = false;
+                if (scanBox) scanBox.style.cursor = 'grab';
+            });
+        });
+    })();
 </script>
 @endpush
 @endsection
