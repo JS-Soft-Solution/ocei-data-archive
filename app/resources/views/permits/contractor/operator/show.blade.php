@@ -25,73 +25,73 @@
                     </div>
 
                     <div class="card-body">
-                        {{-- Personal Information --}}
+                        {{-- Organization Information --}}
                         <div class="mb-4">
-                            <h5 class="border-bottom pb-2"><i class="fas fa-user"></i> Personal Information</h5>
+                            <h5 class="border-bottom pb-2"><i class="fas fa-building"></i> Organization Information</h5>
                             <div class="row">
                                 <div class="col-md-6">
-                                    <p><strong>Old Certificate Number:</strong> {{ $application->old_certificate_number }}
+                                    <p><strong>Old Certificate Number:</strong> {{ $application->old_certificate_number }}</p>
+                                    <p><strong>Organization Name (English):</strong>
+                                        <strong>{{ $application->company_name_en ?? $application->applicant_name_en ?? 'N/A' }}</strong>
                                     </p>
-                                    <p><strong>Applicant Name (English):</strong>
-                                        {{ $application->applicant_name_en ?? 'N/A' }}</p>
-                                    <p><strong>Applicant Name (Bangla):</strong>
-                                        {{ $application->applicant_name_bn ?? 'N/A' }}</p>
-                                    <p><strong>Father's Name:</strong> {{ $application->father_name ?? 'N/A' }}</p>
-                                    <p><strong>Mother's Name:</strong> {{ $application->mother_name ?? 'N/A' }}</p>
+                                    <p><strong>Organization Name (Bangla):</strong>
+                                        {{ $application->company_name_bn ?? $application->applicant_name_bn ?? 'N/A' }}
+                                    </p>
+                                    <p><strong>Owner / Shareholder Name:</strong> {{ $application->owner_shareholder_name ?? 'N/A' }}</p>
+                                    <p><strong>Approved Class:</strong> <span class="badge bg-secondary">{{ $application->class ?? 'N/A' }}</span></p>
+                                    <p><strong>Book Number:</strong> {{ $application->book_number ?? 'N/A' }}</p>
                                 </div>
                                 <div class="col-md-6">
+                                    <p><strong>Company Type:</strong> {{ $application->company_type ?? 'N/A' }}</p>
+                                    <p><strong>Representative Name:</strong> {{ $application->representative_name ?? 'N/A' }}</p>
+                                    <p><strong>Representative Designation:</strong> {{ $application->representative_designation ?? 'N/A' }}</p>
+                                    <p><strong>Trade License Number:</strong> {{ $application->trade_license_number ?? 'N/A' }}</p>
                                     <p><strong>Mobile Number:</strong> {{ $application->mobile_no ?? 'N/A' }}</p>
                                     <p><strong>Email:</strong> {{ $application->email ?? 'N/A' }}</p>
-                                    <p><strong>Date of Birth:</strong> {{ $application->date_of_birth ?? 'N/A' }}</p>
-                                    <p><strong>NID Number:</strong> {{ $application->nid_number ?? 'N/A' }}</p>
                                 </div>
                             </div>
                         </div>
 
-                        {{-- Address Information --}}
+                        {{-- Assigned Supervisor --}}
                         <div class="mb-4">
-                            <h5 class="border-bottom pb-2"><i class="fas fa-map-marker-alt"></i> Address Information</h5>
+                            <h5 class="border-bottom pb-2"><i class="fas fa-user-tie"></i> Assigned Supervisor</h5>
+                            <p><strong>Supervisor Name / Certificate #:</strong> {{ $application->elb_certified_supervisor_no ?? 'N/A' }}</p>
+                        </div>
+
+                        {{-- Testing Equipment --}}
+                        <div class="mb-4">
+                            <h5 class="border-bottom pb-2"><i class="fas fa-tools"></i> Testing Instruments</h5>
                             <div class="row">
-                                <div class="col-md-6">
-                                    <p><strong>Village:</strong> {{ $application->village ?? 'N/A' }}</p>
-                                    <p><strong>Post Office:</strong> {{ $application->post_office ?? 'N/A' }}</p>
-                                    <p><strong>Postcode:</strong> {{ $application->postcode ?? 'N/A' }}</p>
+                                <div class="col-md-4">
+                                    <p><strong>Earth Tester (ET) Serial:</strong> {{ $application->et_serial_no ?? 'N/A' }}</p>
+                                    @if($application->et_manufacturer_name)<p class="text-muted small">Maker: {{ $application->et_manufacturer_name }}</p>@endif
                                 </div>
-                                <div class="col-md-6">
-                                    <p><strong>Upazilla:</strong> {{ $application->upazilla ?? 'N/A' }}</p>
-                                    <p><strong>District:</strong> {{ $application->district ?? 'N/A' }}</p>
-                                    <p><strong>Division:</strong> {{ $application->division ?? 'N/A' }}</p>
+                                <div class="col-md-4">
+                                    <p><strong>Megger (MG) Serial:</strong> {{ $application->mg_serial_no ?? 'N/A' }}</p>
+                                    @if($application->mg_manufacturer_name)<p class="text-muted small">Maker: {{ $application->mg_manufacturer_name }}</p>@endif
+                                </div>
+                                <div class="col-md-4">
+                                    <p><strong>Clamp Meter (CM) Serial:</strong> {{ $application->cm_serial_no ?? 'N/A' }}</p>
+                                    @if($application->cm_manufacturer_name)<p class="text-muted small">Maker: {{ $application->cm_manufacturer_name }}</p>@endif
                                 </div>
                             </div>
                         </div>
 
-                        {{-- Education Information --}}
+                        {{-- Business Address Information --}}
                         <div class="mb-4">
-                            <h5 class="border-bottom pb-2"><i class="fas fa-graduation-cap"></i> Education Information</h5>
+                            <h5 class="border-bottom pb-2"><i class="fas fa-map-marker-alt"></i> Business Address</h5>
                             <div class="row">
-                                <div class="col-md-6">
-                                    <p><strong>Degree:</strong> {{ $application->degree ?? 'N/A' }}</p>
-                                    <p><strong>Subject:</strong> {{ $application->subject ?? 'N/A' }}</p>
-                                    <p><strong>Board:</strong> {{ $application->board ?? 'N/A' }}</p>
+                                <div class="col-md-12">
+                                    <p><strong>Address / Village:</strong> {{ $application->village ?? $application->boa_village ?? 'N/A' }}</p>
                                 </div>
                                 <div class="col-md-6">
-                                    <p><strong>Result:</strong> {{ $application->academic_result ?? 'N/A' }}</p>
-                                    <p><strong>Passing Year:</strong> {{ $application->passing_year ?? 'N/A' }}</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        {{-- Work Experience --}}
-                        <div class="mb-4">
-                            <h5 class="border-bottom pb-2"><i class="fas fa-briefcase"></i> Work Experience</h5>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <p><strong>Company:</strong> {{ $application->company ?? 'N/A' }}</p>
-                                    <p><strong>Designation:</strong> {{ $application->designation ?? 'N/A' }}</p>
+                                    <p><strong>Post Office:</strong> {{ $application->post_office ?? $application->boa_post_office ?? 'N/A' }}</p>
+                                    <p><strong>Postcode:</strong> {{ $application->postcode ?? $application->boa_post_code ?? 'N/A' }}</p>
                                 </div>
                                 <div class="col-md-6">
-                                    <p><strong>Total Job Duration:</strong> {{ $application->total_job_duration ?? 'N/A' }}
-                                    </p>
+                                    <p><strong>Upazilla:</strong> {{ $application->upazilla ?? $application->boa_upozila ?? 'N/A' }}</p>
+                                    <p><strong>District:</strong> {{ $application->district ?? $application->boa_district ?? 'N/A' }}</p>
+                                    <p><strong>Division:</strong> {{ $application->division ?? $application->boa_division ?? 'N/A' }}</p>
                                 </div>
                             </div>
                         </div>

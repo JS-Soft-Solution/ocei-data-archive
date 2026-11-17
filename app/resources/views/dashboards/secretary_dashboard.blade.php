@@ -162,7 +162,7 @@
                                 <tr>
                                     <th>Permit Type</th>
                                     <th>Certificate No.</th>
-                                    <th>Applicant Name</th>
+                                    <th>Applicant / Organization</th>
                                     <th>Verified By OA</th>
                                     <th class="text-end">Action</th>
                                 </tr>

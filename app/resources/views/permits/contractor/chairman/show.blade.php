@@ -46,78 +46,60 @@
                     </div>
                 </div>
 
-                {{-- Personal Information --}}
-                <h5 class="border-bottom pb-2 mb-3">Personal Information</h5>
+                {{-- Organization Information --}}
+                <h5 class="border-bottom pb-2 mb-3"><i class="fas fa-building me-1"></i> Organization Information</h5>
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <p><strong>Name (English):</strong> {{ $application->applicant_name_en }}</p>
-                        <p><strong>Name (Bangla):</strong> {{ $application->applicant_name_bn }}</p>
-                        <p><strong>Father's Name:</strong> {{ $application->father_name }}</p>
+                        <p><strong>Organization Name (English):</strong> <strong>{{ $application->company_name_en ?? $application->applicant_name_en ?? 'N/A' }}</strong></p>
+                        <p><strong>Organization Name (Bangla):</strong> {{ $application->company_name_bn ?? $application->applicant_name_bn ?? 'N/A' }}</p>
+                        <p><strong>Owner / Shareholder:</strong> {{ $application->owner_shareholder_name ?? 'N/A' }}</p>
                     </div>
                     <div class="col-md-6">
-                        <p><strong>Mother's Name:</strong> {{ $application->mother_name }}</p>
-                        <p><strong>Date of Birth:</strong> {{ $application->date_of_birth?->format('Y-m-d') }}</p>
-                        <p><strong>NID:</strong> {{ $application->nid_number }}</p>
+                        <p><strong>Approved Class:</strong> <span class="badge bg-secondary">{{ $application->class ?? 'N/A' }}</span></p>
+                        <p><strong>Book Number:</strong> {{ $application->book_number ?? 'N/A' }}</p>
+                        <p><strong>Trade License:</strong> {{ $application->trade_license_number ?? 'N/A' }}</p>
                     </div>
                 </div>
 
                 {{-- Contact Information --}}
-                <h5 class="border-bottom pb-2 mb-3 mt-4">Contact Information</h5>
+                <h5 class="border-bottom pb-2 mb-3 mt-4"><i class="fas fa-phone me-1"></i> Contact Information</h5>
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <p><strong>Mobile:</strong> {{ $application->mobile_no }}</p>
-                        <p><strong>Email:</strong> {{ $application->email }}</p>
+                        <p><strong>Mobile:</strong> {{ $application->mobile_no ?? 'N/A' }}</p>
+                        <p><strong>Email:</strong> {{ $application->email ?? 'N/A' }}</p>
                     </div>
                     <div class="col-md-6">
-                        <p><strong>District:</strong> {{ $application->district }}</p>
-                        <p><strong>Division:</strong> {{ $application->division }}</p>
+                        <p><strong>District:</strong> {{ $application->district ?? $application->boa_district ?? 'N/A' }}</p>
+                        <p><strong>Division:</strong> {{ $application->division ?? $application->boa_division ?? 'N/A' }}</p>
+                    </div>
+                </div>
+
+                {{-- Assigned Supervisor --}}
+                <h5 class="border-bottom pb-2 mb-3 mt-4"><i class="fas fa-user-tie me-1"></i> Assigned Supervisor</h5>
+                <p><strong>Supervisor Name / Certificate #:</strong> {{ $application->elb_certified_supervisor_no ?? 'N/A' }}</p>
+
+                {{-- Testing Equipment --}}
+                <h5 class="border-bottom pb-2 mb-3 mt-4"><i class="fas fa-tools me-1"></i> Testing Instruments</h5>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <p><strong>Earth Tester (ET) Serial:</strong> {{ $application->et_serial_no ?? 'N/A' }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <p><strong>Megger (MG) Serial:</strong> {{ $application->mg_serial_no ?? 'N/A' }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <p><strong>Clamp Meter (CM) Serial:</strong> {{ $application->cm_serial_no ?? 'N/A' }}</p>
                     </div>
                 </div>
 
                 {{-- Address --}}
-                <h5 class="border-bottom pb-2 mb-3 mt-4">Full Address</h5>
+                <h5 class="border-bottom pb-2 mb-3 mt-4"><i class="fas fa-map-marker-alt me-1"></i> Business Address</h5>
                 <p>
-                    {{ $application->village }}<br>
-                    {{ $application->post_office }}, {{ $application->postcode }}<br>
-                    {{ $application->upazilla }}, {{ $application->district }}, {{ $application->division }}
+                    {{ $application->village ?? $application->boa_village ?? 'N/A' }}<br>
+                    @if($application->upazilla || $application->district || $application->division)
+                        {{ $application->upazilla ?? $application->boa_upozila ?? '' }}, {{ $application->district ?? $application->boa_district ?? '' }}, {{ $application->division ?? $application->boa_division ?? '' }}
+                    @endif
                 </p>
-
-                {{-- Education --}}
-                <h5 class="border-bottom pb-2 mb-3 mt-4">Education</h5>
-                <div class="table-responsive">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Degree</th>
-                                <th>Subject</th>
-                                <th>Board</th>
-                                <th>Result</th>
-                                <th>Passing Year</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>{{ $application->degree }}</td>
-                                <td>{{ $application->subject }}</td>
-                                <td>{{ $application->board }}</td>
-                                <td>{{ $application->academic_result }}</td>
-                                <td>{{ $application->passing_year }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                {{-- Work Experience --}}
-                <h5 class="border-bottom pb-2 mb-3 mt-4">Work Experience</h5>
-                <div class="row">
-                    <div class="col-md-4">
-                        <p><strong>Company:</strong> {{ $application->company }}</p>
-                    </div>
-                    <div class="col-md-4">
-                        <p><strong>Designation:</strong> {{ $application->designation }}</p>
-                    </div>
-                    <div class="col-md-4">
-                        <p><strong>Total Duration:</strong> {{ $application->total_job_duration }}</p>
                     </div>
                 </div>
 

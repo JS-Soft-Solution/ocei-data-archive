@@ -53,8 +53,8 @@
                         <thead class="table-success">
                             <tr>
                                 <th>Certificate #</th>
-                                <th>Applicant Name</th>
-                                <th>NID</th>
+                                <th>Organization Name</th>
+                                <th>Mobile</th>
                                 <th>District</th>
                                 <th>Division</th>
                                 <th>Approved By</th>
@@ -67,12 +67,14 @@
                                 <tr>
                                     <td><strong>{{ $app->old_certificate_number }}</strong></td>
                                     <td>
-                                        {{ $app->applicant_name_en }}<br>
-                                        <small class="text-muted">{{ $app->applicant_name_bn }}</small>
+                                        <strong>{{ $app->company_name_en ?? $app->applicant_name_en ?? 'N/A' }}</strong>
+                                        @if($app->company_name_bn ?? $app->applicant_name_bn)
+                                            <br><small class="text-muted">{{ $app->company_name_bn ?? $app->applicant_name_bn }}</small>
+                                        @endif
                                     </td>
-                                    <td>{{ $app->nid_number }}</td>
-                                    <td>{{ $app->district }}</td>
-                                    <td>{{ $app->division }}</td>
+                                    <td>{{ $app->mobile_no ?? 'N/A' }}</td>
+                                    <td>{{ $app->district ?? $app->boa_district ?? 'N/A' }}</td>
+                                    <td>{{ $app->division ?? $app->boa_division ?? 'N/A' }}</td>
                                     <td>{{ $app->approvedBySecretary?->name }}</td>
                                     <td>{{ $app->approved_at_secretary?->format('Y-m-d') }}</td>
                                     <td>

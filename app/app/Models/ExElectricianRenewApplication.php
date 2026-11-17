@@ -234,6 +234,14 @@ class ExElectricianRenewApplication extends Model
     }
 
     /**
+     * Get applicant name (English or Bangla fallback).
+     */
+    public function getApplicantNameAttribute(): ?string
+    {
+        return $this->applicant_name_en ?: $this->applicant_name_bn;
+    }
+
+    /**
      * Check if the record is locked (secretary approved final).
      */
     public function getIsLockedAttribute(): bool

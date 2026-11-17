@@ -50,7 +50,12 @@
                                         <td><input type="checkbox" name="application_ids[]" value="{{ $app->id }}"
                                                 class="bulk-checkbox"></td>
                                         <td>{{ $app->old_certificate_number }}</td>
-                                        <td>{{ $app->applicant_name_en }}</td>
+                                        <td>
+                                            <strong>{{ $app->applicant_name_en ?? $app->applicant_name_bn ?? 'N/A' }}</strong>
+                                            @if($app->applicant_name_bn && $app->applicant_name_en)
+                                                <br><small class="text-muted">{{ $app->applicant_name_bn }}</small>
+                                            @endif
+                                        </td>
                                         <td>{{ $app->mobile_no }}</td>
                                         <td>{{ $app->verifiedByOfficeAssistant?->name }}</td>
                                         <td>{{ $app->created_at->format('Y-m-d') }}</td>

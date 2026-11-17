@@ -76,9 +76,9 @@
                                         <tr>
                                             <th width="40"><input type="checkbox" id="selectAll"></th>
                                             <th>Old Certificate #</th>
-                                            <th>Applicant Name</th>
+                                            <th>Organization Name</th>
                                             <th>Mobile</th>
-                                            <th>NID</th>
+                                            <th>Class</th>
                                             <th>Status</th>
                                             <th>Attachments</th>
                                             <th>Created</th>
@@ -96,11 +96,13 @@
                                                 </td>
                                                 <td>{{ $app->old_certificate_number }}</td>
                                                 <td>
-                                                    {{ $app->applicant_name_en }}<br>
-                                                    <small class="text-muted">{{ $app->applicant_name_bn }}</small>
+                                                    <strong>{{ $app->company_name_en ?? $app->applicant_name_en ?? 'N/A' }}</strong>
+                                                    @if($app->company_name_bn ?? $app->applicant_name_bn)
+                                                        <br><small class="text-muted">{{ $app->company_name_bn ?? $app->applicant_name_bn }}</small>
+                                                    @endif
                                                 </td>
-                                                <td>{{ $app->mobile_no }}</td>
-                                                <td>{{ $app->nid_number }}</td>
+                                                <td>{{ $app->mobile_no ?? '-' }}</td>
+                                                <td><span class="badge bg-secondary">{{ $app->class ?? '-' }}</span></td>
                                                 <td>
                                                     <span class="badge bg-{{ $app->status_badge_color }}">
                                                         {{ $app->status_label }}

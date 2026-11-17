@@ -197,7 +197,7 @@
                                 <tr>
                                     <th>Type</th>
                                     <th>Certificate No.</th>
-                                    <th>Applicant</th>
+                                    <th>Applicant / Organization</th>
                                     <th>Status</th>
                                     <th>Date</th>
                                 </tr>

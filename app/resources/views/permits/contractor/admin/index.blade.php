@@ -87,7 +87,7 @@
                                 <th>Certificate #</th>
                                 <th>Class</th>
                                 <th>Book #</th>
-                                <th>Applicant</th>
+                                <th>Organization Name</th>
                                 <th>Entry By</th>
                                 <th>Status</th>
                                 <th>Created</th>
@@ -106,7 +106,12 @@
                                     </td>
                                     <td>{{ $app->class }}</td>
                                     <td>{{ $app->book_number }}</td>
-                                    <td>{{ $app->applicant_name_en }}</td>
+                                    <td>
+                                        <strong>{{ $app->company_name_en ?? $app->applicant_name_en ?? 'N/A' }}</strong>
+                                        @if($app->company_name_bn ?? $app->applicant_name_bn)
+                                            <br><small class="text-muted">{{ $app->company_name_bn ?? $app->applicant_name_bn }}</small>
+                                        @endif
+                                    </td>
                                     <td>{{ $app->entryBy?->name ?? 'Unknown' }}</td>
                                     <td>
                                         <span class="badge bg-{{ $app->status_badge_color }}">

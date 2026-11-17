@@ -100,11 +100,11 @@
     <table>
         <thead>
             <tr>
-                <th style="width: 12%">Certificate #</th>
-                <th style="width: 20%">Applicant</th>
+                <th style="width: 15%">Certificate #</th>
+                <th style="width: 25%">Organization Name</th>
                 <th style="width: 12%">Mobile</th>
-                <th style="width: 15%">NID</th>
-                <th style="width: 18%">Status</th>
+                <th style="width: 10%">Class</th>
+                <th style="width: 15%">Status</th>
                 <th style="width: 13%">Entry By</th>
                 <th style="width: 10%">Date</th>
             </tr>
@@ -113,9 +113,9 @@
             @foreach($applications as $app)
                 <tr>
                     <td>{{ $app->old_certificate_number }}</td>
-                    <td>{{ $app->applicant_name_en }}</td>
-                    <td>{{ $app->mobile_no }}</td>
-                    <td>{{ $app->nid_number }}</td>
+                    <td>{{ $app->company_name_en ?? $app->applicant_name_en ?? 'N/A' }}</td>
+                    <td>{{ $app->mobile_no ?? 'N/A' }}</td>
+                    <td>{{ $app->class ?? 'N/A' }}</td>
                     <td>{{ $app->status_label }}</td>
                     <td>{{ $app->entryBy?->full_name ?? 'N/A' }}</td>
                     <td>{{ $app->created_at->format('Y-m-d') }}</td>

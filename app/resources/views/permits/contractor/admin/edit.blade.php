@@ -36,8 +36,8 @@
                         </div>
                     </div>
 
-                    {{-- Personal Information --}}
-                    <h5 class="border-bottom pb-2 mb-3">Personal Information</h5>
+                    {{-- Organization Information --}}
+                    <h5 class="border-bottom pb-2 mb-3"><i class="fas fa-building me-1"></i> Organization Information</h5>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Old Certificate Number</label>
@@ -46,22 +46,22 @@
                             <small class="text-muted">Cannot be changed</small>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">NID Number</label>
-                            <input type="text" name="nid_number" class="form-control"
-                                value="{{ old('nid_number', $application->nid_number) }}">
+                            <label class="form-label">Trade License Number</label>
+                            <input type="text" name="trade_license_number" class="form-control"
+                                value="{{ old('trade_license_number', $application->trade_license_number) }}">
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Applicant Name (English)</label>
-                            <input type="text" name="applicant_name_en" class="form-control"
-                                value="{{ old('applicant_name_en', $application->applicant_name_en) }}">
+                            <label class="form-label">Organization Name (English)</label>
+                            <input type="text" name="company_name_en" class="form-control"
+                                value="{{ old('company_name_en', $application->company_name_en ?? $application->applicant_name_en) }}">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Applicant Name (Bangla)</label>
-                            <input type="text" name="applicant_name_bn" class="form-control"
-                                value="{{ old('applicant_name_bn', $application->applicant_name_bn) }}">
+                            <label class="form-label">Organization Name (Bangla)</label>
+                            <input type="text" name="company_name_bn" class="form-control"
+                                value="{{ old('company_name_bn', $application->company_name_bn ?? $application->applicant_name_bn) }}">
                         </div>
                     </div>
 

@@ -16,10 +16,10 @@
                         <h5 class="border-bottom pb-2 mb-3">Personal Information</h5>
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <strong>Name (English):</strong> {{ $application->applicant_name_en }}
+                                <strong>Name (English):</strong> {{ $application->applicant_name_en ?? 'N/A' }}
                             </div>
                             <div class="col-md-6">
-                                <strong>Name (Bangla):</strong> {{ $application->applicant_name_bn }}
+                                <strong>Name (Bangla):</strong> {{ $application->applicant_name_bn ?? 'N/A' }}
                             </div>
                         </div>
                         <div class="row mb-3">

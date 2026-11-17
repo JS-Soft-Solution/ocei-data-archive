@@ -37,9 +37,9 @@
                         <thead class="table-light">
                             <tr>
                                 <th>Certificate #</th>
-                                <th>Applicant Name</th>
+                                <th>Organization Name</th>
                                 <th>Mobile</th>
-                                <th>NID</th>
+                                <th>Class</th>
                                 <th>Status</th>
                                 <th>Entry By</th>
                                 <th>Created At</th>
@@ -49,9 +49,9 @@
                             @forelse($applications as $app)
                                 <tr>
                                     <td>{{ $app->old_certificate_number }}</td>
-                                    <td>{{ $app->applicant_name_en }}</td>
-                                    <td>{{ $app->mobile_no }}</td>
-                                    <td>{{ $app->nid_number }}</td>
+                                    <td>{{ $app->company_name_en ?? $app->applicant_name_en ?? 'N/A' }}</td>
+                                    <td>{{ $app->mobile_no ?? 'N/A' }}</td>
+                                    <td>{{ $app->class ?? 'N/A' }}</td>
                                     <td>
                                         @if($app->status === 'secretary_approved_final')
                                             <span class="badge bg-success">Final Approved</span>

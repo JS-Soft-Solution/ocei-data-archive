@@ -50,9 +50,9 @@
                 <h5 class="border-bottom pb-2 mb-3">Personal Information</h5>
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <p><strong>Name (English):</strong> {{ $application->applicant_name_en }}</p>
-                        <p><strong>Name (Bangla):</strong> {{ $application->applicant_name_bn }}</p>
-                        <p><strong>Father's Name:</strong> {{ $application->father_name }}</p>
+                        <p><strong>Name (English):</strong> {{ $application->applicant_name_en ?? 'N/A' }}</p>
+                        <p><strong>Name (Bangla):</strong> {{ $application->applicant_name_bn ?? 'N/A' }}</p>
+                        <p><strong>Father's Name:</strong> {{ $application->father_name ?? 'N/A' }}</p>
                     </div>
                     <div class="col-md-6">
                         <p><strong>Mother's Name:</strong> {{ $application->mother_name }}</p>

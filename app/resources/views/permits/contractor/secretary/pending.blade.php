@@ -37,7 +37,7 @@
                                 <tr>
                                     <th width="40"><input type="checkbox" id="selectAll"></th>
                                     <th>Certificate #</th>
-                                    <th>Applicant</th>
+                                    <th>Organization Name</th>
                                     <th>Mobile</th>
                                     <th>Verified By (OA)</th>
                                     <th>Submitted Date</th>
@@ -50,7 +50,12 @@
                                         <td><input type="checkbox" name="application_ids[]" value="{{ $app->id }}"
                                                 class="bulk-checkbox"></td>
                                         <td>{{ $app->old_certificate_number }}</td>
-                                        <td>{{ $app->applicant_name_en }}</td>
+                                        <td>
+                                            <strong>{{ $app->company_name_en ?? $app->applicant_name_en ?? 'N/A' }}</strong>
+                                            @if($app->company_name_bn ?? $app->applicant_name_bn)
+                                                <br><small class="text-muted">{{ $app->company_name_bn ?? $app->applicant_name_bn }}</small>
+                                            @endif
+                                        </td>
                                         <td>{{ $app->mobile_no }}</td>
                                         <td>{{ $app->verifiedByOfficeAssistant?->name }}</td>
                                         <td>{{ $app->created_at->format('Y-m-d') }}</td>
