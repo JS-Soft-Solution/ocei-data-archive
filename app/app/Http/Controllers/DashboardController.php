@@ -314,7 +314,7 @@ class DashboardController extends Controller
                 'created_at' => $app->created_at,
             ]);
 
-        return $electrician->merge($supervisor)->merge($contractor)
+        return $electrician->toBase()->merge($supervisor)->merge($contractor)
             ->sortByDesc('created_at')->take(5)->values()->toArray();
     }
 
@@ -353,7 +353,7 @@ class DashboardController extends Controller
                 'view_url' => route('ex-contractor.office-assistant.show', $app),
             ]);
 
-        return $electrician->merge($supervisor)->merge($contractor)
+        return $electrician->toBase()->merge($supervisor)->merge($contractor)
             ->sortByDesc('submitted_at')->take(10)->values()->toArray();
     }
 
@@ -392,7 +392,7 @@ class DashboardController extends Controller
                 'view_url' => route('ex-contractor.secretary.show', $app),
             ]);
 
-        return $electrician->merge($supervisor)->merge($contractor)
+        return $electrician->toBase()->merge($supervisor)->merge($contractor)
             ->sortByDesc('submitted_at')->take(10)->values()->toArray();
     }
 
@@ -431,7 +431,7 @@ class DashboardController extends Controller
                 'view_url' => route('ex-contractor.chairman.show', $app),
             ]);
 
-        return $electrician->merge($supervisor)->merge($contractor)
+        return $electrician->toBase()->merge($supervisor)->merge($contractor)
             ->sortByDesc('approved_at')->take(10)->values()->toArray();
     }
 
