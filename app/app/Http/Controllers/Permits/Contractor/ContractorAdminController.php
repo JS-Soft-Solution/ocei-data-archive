@@ -222,8 +222,6 @@ class ContractorAdminController extends Controller
             'old_certificate_number' => 'required|string|max:100|unique:ex_contractor_renew_applications,old_certificate_number,' . $application->id,
             'company_name_bn' => 'nullable|string|max:255',
             'company_name_en' => 'nullable|string|max:255',
-            'applicant_name_bn' => 'nullable|string|max:255',
-            'applicant_name_en' => 'nullable|string|max:255',
             'owner_shareholder_name' => 'nullable|string|max:255',
             'class' => 'nullable|string|max:50',
             'book_number' => 'nullable|string|max:100',

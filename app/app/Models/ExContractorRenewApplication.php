@@ -27,8 +27,6 @@ class ExContractorRenewApplication extends Model
         'book_number',
         'company_name_bn',
         'company_name_en',
-        'applicant_name_bn',
-        'applicant_name_en',
         'owner_shareholder_name',
         'company_type',
         'mobile_no',
@@ -255,46 +253,6 @@ class ExContractorRenewApplication extends Model
         }
 
         return $query;
-    }
-
-    /**
-     * Get organization name (or company name).
-     */
-    public function getOrganizationNameAttribute(): ?string
-    {
-        return $this->company_name_en ?: ($this->company_name_bn ?: $this->owner_shareholder_name);
-    }
-
-    /**
-     * Virtual attribute alias for applicant_name_en (Contractor organization name in English).
-     */
-    public function getApplicantNameEnAttribute(): ?string
-    {
-        return $this->attributes['company_name_en'] ?? null;
-    }
-
-    /**
-     * Mutator to store applicant_name_en into company_name_en.
-     */
-    public function setApplicantNameEnAttribute($value): void
-    {
-        $this->attributes['company_name_en'] = $value;
-    }
-
-    /**
-     * Virtual attribute alias for applicant_name_bn (Contractor organization name in Bangla).
-     */
-    public function getApplicantNameBnAttribute(): ?string
-    {
-        return $this->attributes['company_name_bn'] ?? null;
-    }
-
-    /**
-     * Mutator to store applicant_name_bn into company_name_bn.
-     */
-    public function setApplicantNameBnAttribute($value): void
-    {
-        $this->attributes['company_name_bn'] = $value;
     }
 
     /**

@@ -16,10 +16,10 @@
                         <h5 class="border-bottom pb-2 mb-3"><i class="fas fa-building me-1"></i> Organization Information</h5>
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <strong>Organization Name (English):</strong> <strong>{{ $application->company_name_en ?? $application->applicant_name_en ?? 'N/A' }}</strong>
+                                <strong>Organization Name (English):</strong> <strong>{{ $application->company_name_en ?? 'N/A' }}</strong>
                             </div>
                             <div class="col-md-6">
-                                <strong>Organization Name (Bangla):</strong> {{ $application->company_name_bn ?? $application->applicant_name_bn ?? 'N/A' }}
+                                <strong>Organization Name (Bangla):</strong> {{ $application->company_name_bn ?? 'N/A' }}
                             </div>
                         </div>
                         <div class="row mb-3">

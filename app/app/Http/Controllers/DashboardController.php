@@ -307,7 +307,7 @@ class DashboardController extends Controller
                 'type' => 'Contractor',
                 'id' => $app->id,
                 'certificate_number' => $app->old_certificate_number,
-                'applicant_name' => $app->organization_name ?? $app->company_name_en ?? $app->company_name_bn ?? 'N/A',
+                'applicant_name' => $app->company_name_en ?? $app->company_name_bn ?? 'N/A',
                 'status' => $app->status,
                 'status_label' => $app->status_label,
                 'status_badge_color' => $app->status_badge_color,
@@ -348,7 +348,7 @@ class DashboardController extends Controller
                 'type' => 'Contractor',
                 'id' => $app->id,
                 'certificate_number' => $app->old_certificate_number,
-                'applicant_name' => $app->organization_name ?? $app->company_name_en ?? $app->company_name_bn ?? 'N/A',
+                'applicant_name' => $app->company_name_en ?? $app->company_name_bn ?? 'N/A',
                 'submitted_at' => $app->entry_at,
                 'view_url' => route('ex-contractor.office-assistant.show', $app),
             ]);
@@ -387,7 +387,7 @@ class DashboardController extends Controller
                 'type' => 'Contractor',
                 'id' => $app->id,
                 'certificate_number' => $app->old_certificate_number,
-                'applicant_name' => $app->organization_name ?? $app->company_name_en ?? $app->company_name_bn ?? 'N/A',
+                'applicant_name' => $app->company_name_en ?? $app->company_name_bn ?? 'N/A',
                 'submitted_at' => $app->verified_at_office_assistant,
                 'view_url' => route('ex-contractor.secretary.show', $app),
             ]);
@@ -426,7 +426,7 @@ class DashboardController extends Controller
                 'type' => 'Contractor',
                 'id' => $app->id,
                 'certificate_number' => $app->old_certificate_number,
-                'applicant_name' => $app->organization_name ?? $app->company_name_en ?? $app->company_name_bn ?? 'N/A',
+                'applicant_name' => $app->company_name_en ?? $app->company_name_bn ?? 'N/A',
                 'approved_at' => $app->approved_at_secretary,
                 'view_url' => route('ex-contractor.chairman.show', $app),
             ]);

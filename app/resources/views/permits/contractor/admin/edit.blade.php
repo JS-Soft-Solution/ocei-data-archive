@@ -56,12 +56,12 @@
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Organization Name (English)</label>
                             <input type="text" name="company_name_en" class="form-control"
-                                value="{{ old('company_name_en', $application->company_name_en ?? $application->applicant_name_en) }}">
+                                value="{{ old('company_name_en', $application->company_name_en) }}">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Organization Name (Bangla)</label>
                             <input type="text" name="company_name_bn" class="form-control"
-                                value="{{ old('company_name_bn', $application->company_name_bn ?? $application->applicant_name_bn) }}">
+                                value="{{ old('company_name_bn', $application->company_name_bn) }}">
                         </div>
                     </div>
 

@@ -32,10 +32,10 @@
                                 <div class="col-md-6">
                                     <p><strong>Old Certificate Number:</strong> {{ $application->old_certificate_number }}</p>
                                     <p><strong>Organization Name (English):</strong>
-                                        <strong>{{ $application->company_name_en ?? $application->applicant_name_en ?? 'N/A' }}</strong>
+                                        <strong>{{ $application->company_name_en ?? 'N/A' }}</strong>
                                     </p>
                                     <p><strong>Organization Name (Bangla):</strong>
-                                        {{ $application->company_name_bn ?? $application->applicant_name_bn ?? 'N/A' }}
+                                        {{ $application->company_name_bn ?? 'N/A' }}
                                     </p>
                                     <p><strong>Owner / Shareholder Name:</strong> {{ $application->owner_shareholder_name ?? 'N/A' }}</p>
                                     <p><strong>Approved Class:</strong> <span class="badge bg-secondary">{{ $application->class ?? 'N/A' }}</span></p>

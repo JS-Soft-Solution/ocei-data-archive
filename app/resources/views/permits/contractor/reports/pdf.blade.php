@@ -113,7 +113,7 @@
             @foreach($applications as $app)
                 <tr>
                     <td>{{ $app->old_certificate_number }}</td>
-                    <td>{{ $app->company_name_en ?? $app->applicant_name_en ?? 'N/A' }}</td>
+                    <td>{{ $app->company_name_en ?? $app->company_name_bn ?? 'N/A' }}</td>
                     <td>{{ $app->mobile_no ?? 'N/A' }}</td>
                     <td>{{ $app->class ?? 'N/A' }}</td>
                     <td>{{ $app->status_label }}</td>
