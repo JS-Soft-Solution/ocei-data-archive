@@ -17,20 +17,8 @@ class ElectricianChairmanController extends Controller
     {
         $query = ExElectricianRenewApplication::query()
             ->where('status', 'secretary_approved_final')
-            ->with(['attachments', 'entryBy', 'approvedBySecretary']);
-
-        // Search functionality
-        if ($search = $request->get('search')) {
-            $query->search($search);
-        }
-
-        // Date range filter
-        if ($from = $request->get('date_from')) {
-            $query->whereDate('approved_at_secretary', '>=', $from);
-        }
-        if ($to = $request->get('date_to')) {
-            $query->whereDate('approved_at_secretary', '<=', $to);
-        }
+            ->with(['attachments', 'entryBy', 'approvedBySecretary'])
+            ->filter($request->except('status'), 'approved_at_secretary');
 
 
         $perPage = $request->get('per_page', 25);

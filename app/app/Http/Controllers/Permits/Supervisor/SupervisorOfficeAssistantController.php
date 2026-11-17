@@ -20,20 +20,8 @@ class SupervisorOfficeAssistantController extends Controller
     {
         $query = ExSupervisorRenewApplication::query()
             ->where('status', 'submitted_to_office_assistant')
-            ->with(['attachments', 'entryBy']);
-
-        // Search functionality
-        if ($search = $request->get('search')) {
-            $query->search($search);
-        }
-
-        // Date range filter
-        if ($from = $request->get('date_from')) {
-            $query->whereDate('created_at', '>=', $from);
-        }
-        if ($to = $request->get('date_to')) {
-            $query->whereDate('created_at', '<=', $to);
-        }
+            ->with(['attachments', 'entryBy'])
+            ->filter($request->except('status'));
 
         $perPage = $request->get('per_page', 25);
         $applications = $query->latest()->paginate($perPage)->appends($request->except('page'));
@@ -49,20 +37,8 @@ class SupervisorOfficeAssistantController extends Controller
         $query = ExSupervisorRenewApplication::query()
             ->where('status', 'office_assistant_rejected')
             ->where('rejected_by', Auth::id())
-            ->with(['attachments', 'entryBy']);
-
-        // Search functionality
-        if ($search = $request->get('search')) {
-            $query->search($search);
-        }
-
-        // Date range filter
-        if ($from = $request->get('date_from')) {
-            $query->whereDate('rejected_at', '>=', $from);
-        }
-        if ($to = $request->get('date_to')) {
-            $query->whereDate('rejected_at', '<=', $to);
-        }
+            ->with(['attachments', 'entryBy'])
+            ->filter($request->except('status'), 'rejected_at');
 
         $perPage = $request->get('per_page', 25);
         $applications = $query->latest('rejected_at')->paginate($perPage)->appends($request->except('page'));
@@ -78,20 +54,8 @@ class SupervisorOfficeAssistantController extends Controller
         $query = ExSupervisorRenewApplication::query()
             ->where('verified_by_office_assistant', Auth::id())
             ->with(['attachments', 'entryBy'])
-            ->whereIn('status', ['submitted_to_secretary', 'secretary_approved_final', 'secretary_rejected']);
-
-        // Search functionality
-        if ($search = $request->get('search')) {
-            $query->search($search);
-        }
-
-        // Date range filter
-        if ($from = $request->get('date_from')) {
-            $query->whereDate('verified_at_office_assistant', '>=', $from);
-        }
-        if ($to = $request->get('date_to')) {
-            $query->whereDate('verified_at_office_assistant', '<=', $to);
-        }
+            ->whereIn('status', ['submitted_to_secretary', 'secretary_approved_final', 'secretary_rejected'])
+            ->filter($request->except('status'), 'verified_at_office_assistant');
 
         $perPage = $request->get('per_page', 25);
         $applications = $query->latest('verified_at_office_assistant')->paginate($perPage)->appends($request->except('page'));

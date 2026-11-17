@@ -20,6 +20,7 @@ use App\Http\Controllers\Permits\Contractor\ContractorSecretaryController;
 use App\Http\Controllers\Permits\Contractor\ContractorChairmanController;
 use App\Http\Controllers\Permits\Contractor\ContractorAdminController;
 use App\Http\Controllers\Permits\Contractor\ContractorReportController;
+use App\Http\Controllers\Reports\KpiReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,6 +45,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/rejected', [ElectricianOperatorController::class, 'rejected'])->name('rejected');
         Route::get('/approved', [ElectricianOperatorController::class, 'approved'])->name('approved');
         Route::get('/create', [ElectricianOperatorController::class, 'create'])->name('create');
+        Route::get('/quick-create', [ElectricianOperatorController::class, 'quickCreate'])->name('quick-create');
+        Route::post('/quick-store', [ElectricianOperatorController::class, 'quickStore'])->name('quick-store');
         Route::post('/', [ElectricianOperatorController::class, 'store'])->name('store');
         Route::get('/{application}/edit', [ElectricianOperatorController::class, 'edit'])->name('edit');
         Route::get('/{application}', [ElectricianOperatorController::class, 'show'])->name('show');
@@ -113,6 +116,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/rejected', [SupervisorOperatorController::class, 'rejected'])->name('rejected');
         Route::get('/approved', [SupervisorOperatorController::class, 'approved'])->name('approved');
         Route::get('/create', [SupervisorOperatorController::class, 'create'])->name('create');
+        Route::get('/quick-create', [SupervisorOperatorController::class, 'quickCreate'])->name('quick-create');
+        Route::post('/quick-store', [SupervisorOperatorController::class, 'quickStore'])->name('quick-store');
         Route::post('/', [SupervisorOperatorController::class, 'store'])->name('store');
         Route::get('/{application}/edit', [SupervisorOperatorController::class, 'edit'])->name('edit');
         Route::get('/{application}', [SupervisorOperatorController::class, 'show'])->name('show');
@@ -182,6 +187,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/rejected', [ContractorOperatorController::class, 'rejected'])->name('rejected');
         Route::get('/approved', [ContractorOperatorController::class, 'approved'])->name('approved');
         Route::get('/create', [ContractorOperatorController::class, 'create'])->name('create');
+        Route::get('/quick-create', [ContractorOperatorController::class, 'quickCreate'])->name('quick-create');
+        Route::post('/quick-store', [ContractorOperatorController::class, 'quickStore'])->name('quick-store');
         Route::post('/', [ContractorOperatorController::class, 'store'])->name('store');
         Route::get('/{application}/edit', [ContractorOperatorController::class, 'edit'])->name('edit');
         Route::get('/{application}', [ContractorOperatorController::class, 'show'])->name('show');
@@ -239,6 +246,13 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/{application}', [ContractorAdminController::class, 'destroy'])->name('destroy');
         Route::post('/{id}/restore', [ContractorAdminController::class, 'restore'])->name('restore');
         Route::post('/{application}/change-status', [ContractorAdminController::class, 'changeStatus'])->name('change-status');
+    });
+
+    // ========== KPI & ANALYTICS REPORTS ==========
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('/kpi', [KpiReportController::class, 'kpi'])->name('kpi');
+        Route::get('/operator', [KpiReportController::class, 'operatorReport'])->name('operator');
+        Route::get('/office-assistant', [KpiReportController::class, 'officeAssistantReport'])->name('office-assistant');
     });
 });
 

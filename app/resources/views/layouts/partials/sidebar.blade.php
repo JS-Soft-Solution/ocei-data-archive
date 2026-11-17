@@ -29,6 +29,40 @@
                     </a>
                 </li>
 
+                {{-- ROLE-SPECIFIC & KPI REPORTS --}}
+                @if(auth()->check())
+                    @if(in_array(auth()->user()->admin_type, ['secretary', 'chairman', 'super_admin', 'system_admin']))
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('reports.kpi') ? 'active' : '' }}" href="{{ route('reports.kpi') }}" role="button">
+                                <div class="d-flex align-items-center">
+                                    <span class="nav-link-icon"><span class="fas fa-chart-line text-primary"></span></span>
+                                    <span class="nav-link-text ps-1">KPI Analytics</span>
+                                </div>
+                            </a>
+                        </li>
+                    @endif
+                    @if(in_array(auth()->user()->admin_type, ['data_entry_operator', 'super_admin', 'system_admin']))
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('reports.operator') ? 'active' : '' }}" href="{{ route('reports.operator') }}" role="button">
+                                <div class="d-flex align-items-center">
+                                    <span class="nav-link-icon"><span class="fas fa-user-check text-info"></span></span>
+                                    <span class="nav-link-text ps-1">Operator Report</span>
+                                </div>
+                            </a>
+                        </li>
+                    @endif
+                    @if(in_array(auth()->user()->admin_type, ['office_assistant', 'super_admin', 'system_admin']))
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('reports.office-assistant') ? 'active' : '' }}" href="{{ route('reports.office-assistant') }}" role="button">
+                                <div class="d-flex align-items-center">
+                                    <span class="nav-link-icon"><span class="fas fa-tasks text-success"></span></span>
+                                    <span class="nav-link-text ps-1">Verification Report</span>
+                                </div>
+                            </a>
+                        </li>
+                    @endif
+                @endif
+
                 {{-- USER MANAGEMENT SECTION --}}
                 {{-- Only visible to specific roles --}}
                 @if(auth()->check() && auth()->user()->hasRole(['super_admin']))
@@ -161,6 +195,12 @@
                             @else
                                 {{-- Regular Users: Role-Based Menus --}}
                                 @if(auth()->check() && auth()->user()->admin_type === 'data_entry_operator')
+                                    <li class="nav-item">
+                                        <a class="nav-link {{ request()->routeIs('ex-electrician.operator.quick-create') ? 'active' : '' }}"
+                                            href="{{ route('ex-electrician.operator.quick-create') }}">
+                                            <div class="d-flex align-items-center"><span class="nav-link-text ps-1 text-success fw-bold">⚡ Quick Entry</span></div>
+                                        </a>
+                                    </li>
                                     <li class="nav-item">
                                         <a class="nav-link {{ request()->routeIs('ex-electrician.operator.index') ? 'active' : '' }}"
                                             href="{{ route('ex-electrician.operator.index') }}">
@@ -345,6 +385,12 @@
                                 {{-- Regular Users: Role-Based Menus --}}
                                 @if(auth()->check() && auth()->user()->admin_type === 'data_entry_operator')
                                     <li class="nav-item">
+                                        <a class="nav-link {{ request()->routeIs('ex-supervisor.operator.quick-create') ? 'active' : '' }}"
+                                            href="{{ route('ex-supervisor.operator.quick-create') }}">
+                                            <div class="d-flex align-items-center"><span class="nav-link-text ps-1 text-success fw-bold">⚡ Quick Entry</span></div>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
                                         <a class="nav-link {{ request()->routeIs('ex-supervisor.operator.index') ? 'active' : '' }}"
                                             href="{{ route('ex-supervisor.operator.index') }}">
                                             <div class="d-flex align-items-center"><span class="nav-link-text ps-1">My
@@ -503,6 +549,12 @@
                             @else
                                 {{-- Regular Users: Role-Based Menus --}}
                                 @if(auth()->check() && auth()->user()->admin_type === 'data_entry_operator')
+                                    <li class="nav-item">
+                                        <a class="nav-link {{ request()->routeIs('ex-contractor.operator.quick-create') ? 'active' : '' }}"
+                                            href="{{ route('ex-contractor.operator.quick-create') }}">
+                                            <div class="d-flex align-items-center"><span class="nav-link-text ps-1 text-success fw-bold">⚡ Quick Entry</span></div>
+                                        </a>
+                                    </li>
                                     <li class="nav-item">
                                         <a class="nav-link {{ request()->routeIs('ex-contractor.operator.index') ? 'active' : '' }}"
                                             href="{{ route('ex-contractor.operator.index') }}">

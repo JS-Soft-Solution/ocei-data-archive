@@ -15,44 +15,8 @@
                     logged.
                 </div>
 
-                {{-- Search and Filters --}}
-                <form method="GET" class="mb-4">
-                    <div class="row">
-                        <div class="col-md-3 mb-3">
-                            <input type="text" name="search" class="form-control" placeholder="Search"
-                                value="{{ request('search') }}">
-                        </div>
-                        <div class="col-md-2 mb-3">
-                            <select name="status" class="form-control">
-                                <option value="">All Statuses</option>
-                                <option value="draft" {{ request('status') === 'draft' ? 'selected' : '' }}>Draft</option>
-                                <option value="submitted_to_office_assistant" {{ request('status') === 'submitted_to_office_assistant' ? 'selected' : '' }}>Submitted to OA
-                                </option>
-                                <option value="office_assistant_rejected" {{ request('status') === 'office_assistant_rejected' ? 'selected' : '' }}>OA Rejected</option>
-                                <option value="submitted_to_secretary" {{ request('status') === 'submitted_to_secretary' ? 'selected' : '' }}>Submitted to Secretary</option>
-                                <option value="secretary_rejected" {{ request('status') === 'secretary_rejected' ? 'selected' : '' }}>Secretary Rejected</option>
-                                <option value="secretary_approved_final" {{ request('status') === 'secretary_approved_final' ? 'selected' : '' }}>Final Approved</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2 mb-3">
-                            <select name="show_deleted" class="form-control">
-                                <option value="0" {{ request('show_deleted') == '0' ? 'selected' : '' }}>Active Only</option>
-                                <option value="1" {{ request('show_deleted') == '1' ? 'selected' : '' }}>Deleted Only</option>
-                                <option value="all" {{ request('show_deleted') == 'all' ? 'selected' : '' }}>All (Active +
-                                    Deleted)</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2 mb-3">
-                            <input type="date" name="date_from" class="form-control" value="{{ request('date_from') }}">
-                        </div>
-                        <div class="col-md-2 mb-3">
-                            <input type="date" name="date_to" class="form-control" value="{{ request('date_to') }}">
-                        </div>
-                        <div class="col-md-1 mb-3">
-                            <button type="submit" class="btn btn-primary w-100">Search</button>
-                        </div>
-                    </div>
-                </form>
+                {{-- Search and Filter Bar --}}
+                <x-permit-filter-bar :show-status="true" :show-deleted="true" />
 
                 {{-- Statistics --}}
                 <div class="row mb-4">

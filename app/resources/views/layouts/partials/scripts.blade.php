@@ -9,8 +9,24 @@
 <script src="{{ asset('vendors/fontawesome/all.min.js') }}"></script>
 <script src="{{ asset('vendors/lodash/lodash.min.js') }}"></script>
 <script src="{{ asset('vendors/list.js/list.min.js') }}"></script>
+<script src="{{ asset('vendors/flatpickr/flatpickr.min.js') }}"></script>
 <script src="{{ asset('assets/js/theme.js') }}"></script>
 <script src="{{ asset('assets/js/notifications.js') }}"></script>
+
+{{-- Global Date Picker Initialization (Bangladesh DD-MM-YYYY format) --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        if (typeof flatpickr !== 'undefined') {
+            flatpickr("input[type='date'], .datetimepicker, .datepicker, [data-datepicker]", {
+                dateFormat: "Y-m-d",        // Internal submitted format
+                altInput: true,            // User-facing display input
+                altFormat: "d-m-Y",        // Bangladesh common format: DD-MM-YYYY (e.g., 30-01-2026)
+                allowInput: true,          // Allow manual typing
+                disableMobile: true,       // Force Flatpickr on mobile & Edge to avoid m/d/Y native quirks
+            });
+        }
+    });
+</script>
 
 {{-- SweetAlert2 --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

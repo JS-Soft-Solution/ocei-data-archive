@@ -22,25 +22,8 @@ class ElectricianOperatorController extends Controller
 
         $query = ExElectricianRenewApplication::query()
             ->where('entry_by', Auth::id())
-            ->with(['attachments', 'entryBy']);
-
-        // Search functionality
-        if ($search = $request->get('search')) {
-            $query->search($search);
-        }
-
-        // Status filter
-        if ($status = $request->get('status')) {
-            $query->where('status', $status);
-        }
-
-        // Date range filter
-        if ($from = $request->get('date_from')) {
-            $query->whereDate('created_at', '>=', $from);
-        }
-        if ($to = $request->get('date_to')) {
-            $query->whereDate('created_at', '<=', $to);
-        }
+            ->with(['attachments', 'entryBy'])
+            ->filter($request);
 
         $perPage = $request->get('per_page', 25);
         $applications = $query->latest()->paginate($perPage)->appends($request->except('page'));
@@ -58,11 +41,8 @@ class ElectricianOperatorController extends Controller
         $query = ExElectricianRenewApplication::query()
             ->where('entry_by', Auth::id())
             ->whereIn('status', ['submitted_to_office_assistant', 'submitted_to_secretary'])
-            ->with(['attachments', 'entryBy']);
-
-        if ($search = $request->get('search')) {
-            $query->search($search);
-        }
+            ->with(['attachments', 'entryBy'])
+            ->filter($request->except('status'));
 
         $perPage = $request->get('per_page', 25);
         $applications = $query->latest()->paginate($perPage)->appends($request->except('page'));
@@ -80,11 +60,8 @@ class ElectricianOperatorController extends Controller
         $query = ExElectricianRenewApplication::query()
             ->where('entry_by', Auth::id())
             ->whereIn('status', ['office_assistant_rejected', 'secretary_rejected'])
-            ->with(['attachments', 'entryBy', 'rejectedBy']);
-
-        if ($search = $request->get('search')) {
-            $query->search($search);
-        }
+            ->with(['attachments', 'entryBy', 'rejectedBy'])
+            ->filter($request->except('status'));
 
         $perPage = $request->get('per_page', 25);
         $applications = $query->latest('updated_at')->paginate($perPage)->appends($request->except('page'));
@@ -102,20 +79,8 @@ class ElectricianOperatorController extends Controller
         $query = ExElectricianRenewApplication::query()
             ->where('entry_by', Auth::id())
             ->where('status', 'secretary_approved_final')
-            ->with(['attachments', 'entryBy', 'approvedBySecretary', 'verifiedByOfficeAssistant']);
-
-        if ($search = $request->get('search')) {
-            $query->search($search);
-        }
-
-        // Date filter on approval date
-        if ($from = $request->get('date_from')) {
-            $query->whereDate('approved_at_secretary', '>=', $from);
-        }
-        if ($to = $request->get('date_to')) {
-            $query->whereDate('approved_at_secretary', '<=', $to);
-        }
-
+            ->with(['attachments', 'entryBy', 'approvedBySecretary', 'verifiedByOfficeAssistant'])
+            ->filter($request->except('status'), 'approved_at_secretary');
 
         $perPage = $request->get('per_page', 25);
         $applications = $query->latest('approved_at_secretary')->paginate($perPage)->appends($request->except('page'));
@@ -131,6 +96,99 @@ class ElectricianOperatorController extends Controller
         $this->authorize('create', ExElectricianRenewApplication::class);
 
         return view('permits.electrician.operator.create');
+    }
+
+    /**
+     * Show the quick data entry form with minimal fields & side-by-side scanner.
+     */
+    public function quickCreate()
+    {
+        $this->authorize('create', ExElectricianRenewApplication::class);
+
+        return view('permits.electrician.operator.quick_create');
+    }
+
+    /**
+     * Store quick data entry application with mandatory register scan.
+     */
+    public function quickStore(Request $request)
+    {
+        $this->authorize('create', ExElectricianRenewApplication::class);
+
+        $validated = $request->validate([
+            'book_number' => 'nullable|string|max:100',
+            'old_certificate_number' => 'required|string|max:100|unique:ex_electrician_renew_applications,old_certificate_number',
+            'class' => 'nullable|string|max:50',
+            'applicant_name_en' => 'nullable|string|max:255',
+            'applicant_name_bn' => 'nullable|string|max:255',
+            'father_name' => 'nullable|string|max:255',
+            'mobile_no' => 'nullable|string|max:255',
+            'nid_number' => 'nullable|string|max:255',
+            'village' => 'nullable|string',
+            'degree' => 'nullable|string|max:255',
+            'passing_year' => 'nullable|string|max:50',
+            'issue_date' => 'nullable|date',
+            'expiry_date' => 'nullable|date',
+            'result' => 'nullable|string|max:50',
+            'scanned_document' => 'required|file|mimes:jpeg,jpg,png,pdf,webp|max:10240',
+            'form_action' => 'required|in:save_draft,submit_for_approval',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $status = ($request->form_action === 'submit_for_approval')
+                ? 'submitted_to_office_assistant'
+                : 'draft';
+
+            $data = collect($validated)->except(['scanned_document', 'form_action'])->toArray();
+
+            $application = ExElectricianRenewApplication::create([
+                ...$data,
+                'status' => $status,
+                'entry_by' => Auth::id(),
+                'entry_at' => now(),
+                'last_updated_by' => Auth::id(),
+                'last_updated_at' => now(),
+            ]);
+
+            // Save the scanned document as attachment
+            if ($request->hasFile('scanned_document')) {
+                $file = $request->file('scanned_document');
+                $storagePath = "legacy_permits/electrician/{$application->id}";
+                $fileName = time() . '_' . $file->getClientOriginalName();
+                $filePath = $file->storeAs($storagePath, $fileName, 'private');
+
+                $application->attachments()->create([
+                    'file_name' => $fileName,
+                    'file_path' => $filePath,
+                    'original_name' => $file->getClientOriginalName(),
+                    'file_size' => $file->getSize(),
+                    'mime_type' => $file->getMimeType(),
+                    'attachment_type' => 'old_certificate',
+                    'uploaded_by' => Auth::id(),
+                    'uploaded_at' => now(),
+                ]);
+
+                $application->logAttachmentAdded($fileName);
+            }
+
+            if ($status === 'submitted_to_office_assistant') {
+                NotificationService::notifyApplicationSubmitted($application, 'electrician');
+            }
+
+            DB::commit();
+
+            if ($request->has('save_and_next')) {
+                return redirect()->route('ex-electrician.operator.quick-create')
+                    ->with('success', "Record '{$application->old_certificate_number}' saved successfully! Ready for next record.");
+            }
+
+            return redirect()->route('ex-electrician.operator.index')
+                ->with('success', "Record '{$application->old_certificate_number}' saved successfully (" . ($status === 'draft' ? 'Draft' : 'Submitted to Office Assistant') . ").");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withInput()->with('error', 'Failed to save application: ' . $e->getMessage());
+        }
     }
 
     /**
