@@ -200,6 +200,62 @@ class ExContractorRenewApplication extends Model
     }
 
     /**
+     * Scope to apply advanced filters (book_number, class, year, district, division, dates, search, status).
+     */
+    public function scopeFilter(Builder $query, $filters, string $dateColumn = 'created_at'): Builder
+    {
+        if ($filters instanceof \Illuminate\Http\Request) {
+            $filters = $filters->all();
+        }
+
+        if (!is_array($filters)) {
+            return $query;
+        }
+
+        if (!empty($filters['search'])) {
+            $query->search(trim($filters['search']));
+        }
+
+        if (!empty($filters['book_number'])) {
+            $query->where('book_number', 'like', '%' . trim($filters['book_number']) . '%');
+        }
+
+        if (!empty($filters['class'])) {
+            $query->where('class', trim($filters['class']));
+        }
+
+        if (!empty($filters['year'])) {
+            $year = trim($filters['year']);
+            $query->where(function ($q) use ($year) {
+                $q->whereYear('issue_date', $year)
+                  ->orWhereYear('created_at', $year);
+            });
+        }
+
+        if (!empty($filters['district'])) {
+            $query->where('district', 'like', '%' . trim($filters['district']) . '%');
+        }
+
+        if (!empty($filters['division'])) {
+            $query->where('division', trim($filters['division']));
+        }
+
+        if (!empty($filters['status'])) {
+            $query->where('status', trim($filters['status']));
+        }
+
+        if (!empty($filters['date_from'])) {
+            $query->whereDate($dateColumn, '>=', $filters['date_from']);
+        }
+
+        if (!empty($filters['date_to'])) {
+            $query->whereDate($dateColumn, '<=', $filters['date_to']);
+        }
+
+        return $query;
+    }
+
+    /**
      * Check if the record is locked (secretary approved final).
      */
     public function getIsLockedAttribute(): bool

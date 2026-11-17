@@ -20,20 +20,8 @@ class ElectricianSecretaryController extends Controller
     {
         $query = ExElectricianRenewApplication::query()
             ->where('status', 'submitted_to_secretary')
-            ->with(['attachments', 'entryBy', 'verifiedByOfficeAssistant']);
-
-        // Search functionality
-        if ($search = $request->get('search')) {
-            $query->search($search);
-        }
-
-        // Date range filter
-        if ($from = $request->get('date_from')) {
-            $query->whereDate('created_at', '>=', $from);
-        }
-        if ($to = $request->get('date_to')) {
-            $query->whereDate('created_at', '<=', $to);
-        }
+            ->with(['attachments', 'entryBy', 'verifiedByOfficeAssistant'])
+            ->filter($request->except('status'));
 
         $perPage = $request->get('per_page', 25);
         $applications = $query->latest()->paginate($perPage)->appends($request->except('page'));
@@ -49,20 +37,8 @@ class ElectricianSecretaryController extends Controller
         $query = ExElectricianRenewApplication::query()
             ->where('status', 'secretary_rejected')
             ->where('rejected_by', Auth::id())
-            ->with(['attachments', 'entryBy', 'verifiedByOfficeAssistant']);
-
-        // Search functionality
-        if ($search = $request->get('search')) {
-            $query->search($search);
-        }
-
-        // Date range filter
-        if ($from = $request->get('date_from')) {
-            $query->whereDate('rejected_at', '>=', $from);
-        }
-        if ($to = $request->get('date_to')) {
-            $query->whereDate('rejected_at', '<=', $to);
-        }
+            ->with(['attachments', 'entryBy', 'verifiedByOfficeAssistant'])
+            ->filter($request->except('status'), 'rejected_at');
 
         $perPage = $request->get('per_page', 25);
         $applications = $query->latest('rejected_at')->paginate($perPage)->appends($request->except('page'));
@@ -78,20 +54,8 @@ class ElectricianSecretaryController extends Controller
         $query = ExElectricianRenewApplication::query()
             ->where('status', 'secretary_approved_final')
             ->where('approved_by_secretary', Auth::id())
-            ->with(['attachments', 'entryBy', 'verifiedByOfficeAssistant']);
-
-        // Search functionality
-        if ($search = $request->get('search')) {
-            $query->search($search);
-        }
-
-        // Date range filter
-        if ($from = $request->get('date_from')) {
-            $query->whereDate('approved_at_secretary', '>=', $from);
-        }
-        if ($to = $request->get('date_to')) {
-            $query->whereDate('approved_at_secretary', '<=', $to);
-        }
+            ->with(['attachments', 'entryBy', 'verifiedByOfficeAssistant'])
+            ->filter($request->except('status'), 'approved_at_secretary');
 
 
         $perPage = $request->get('per_page', 25);

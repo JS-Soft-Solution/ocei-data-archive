@@ -76,6 +76,9 @@ class ElectricianReportController extends Controller
             'division' => 'nullable|string',
             'entry_by' => 'nullable|exists:users,id',
             'search' => 'nullable|string',
+            'book_number' => 'nullable|string',
+            'class' => 'nullable|string',
+            'year' => 'nullable|integer',
         ]);
     }
 
@@ -85,34 +88,11 @@ class ElectricianReportController extends Controller
     protected function buildQuery(array $filters)
     {
         $query = ExElectricianRenewApplication::query()
-            ->with(['entryBy', 'approvedBySecretary']);
-
-        if (!empty($filters['status'])) {
-            $query->where('status', $filters['status']);
-        }
-
-        if (!empty($filters['date_from'])) {
-            $query->whereDate('created_at', '>=', $filters['date_from']);
-        }
-
-        if (!empty($filters['date_to'])) {
-            $query->whereDate('created_at', '<=', $filters['date_to']);
-        }
-
-        if (!empty($filters['district'])) {
-            $query->where('district', $filters['district']);
-        }
-
-        if (!empty($filters['division'])) {
-            $query->where('division', $filters['division']);
-        }
+            ->with(['entryBy', 'approvedBySecretary'])
+            ->filter($filters);
 
         if (!empty($filters['entry_by'])) {
             $query->where('entry_by', $filters['entry_by']);
-        }
-
-        if (!empty($filters['search'])) {
-            $query->search($filters['search']);
         }
 
         return $query->latest();
