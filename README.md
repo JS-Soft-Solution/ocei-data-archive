@@ -8,16 +8,24 @@ The application features full workflow automation for Electrician, Supervisor, a
 
 ## 📑 Table of Contents
 
-1. [🛠 System Architecture & Stack](#-system-architecture--stack)
-2. [⚡ 1-Step Docker Setup (Zero Configuration)](#-1-step-docker-setup-zero-configuration)
-3. [🔄 Live Code Reload (Development on Disk)](#-live-code-reload-development-on-disk)
-4. [🔑 Default Test Accounts & Roles](#-default-test-accounts--roles)
-5. [🌐 Accessing Services](#-accessing-services)
-6. [💻 Useful Development Commands](#-useful-development-commands)
-7. [📦 cPanel Deployment Guide](#-cpanel-deployment-guide)
-8. [🐧 Ubuntu 22.04 / 24.04 LTS Production Deployment (LEMP)](#-ubuntu-2204--2404-lts-production-deployment-lemp)
-9. [🎩 CentOS / RHEL / Rocky Linux 9 Production Deployment](#-centos--rhel--rocky-linux-9-production-deployment)
-10. [🔒 Production Security & Maintenance](#-production-security--maintenance)
+- **Development & Architecture**
+  1. [🛠 System Architecture & Stack](#-system-architecture--stack)
+  2. [⚡ 1-Step Local Docker Setup (Zero Configuration)](#-1-step-local-docker-setup-zero-configuration)
+  3. [🔄 Live Code Reload (Development on Disk)](#-live-code-reload-development-on-disk)
+  4. [🔑 Default Test Accounts & Roles](#-default-test-accounts--roles)
+  5. [🌐 Accessing Services](#-accessing-services)
+  6. [💻 Useful Development Commands](#-useful-development-commands)
+- **Method 1: Regular / Native Deployment (No Docker)**
+  7. [📦 cPanel / Shared Hosting Guide (Native - No Docker)](#-cpanel--shared-hosting-guide-native---no-docker)
+  8. [🐧 Ubuntu 22.04 / 24.04 LTS Server (Native LEMP - No Docker)](#-ubuntu-2204--2404-lts-server-native-lemp---no-docker)
+  9. [🎩 CentOS / RHEL / Rocky Linux 9 Server (Native LEMP - No Docker)](#-centos--rhel--rocky-linux-9-server-native-lemp---no-docker)
+- **Method 2: Dockerized Production Deployment (With Docker & Compose)**
+  10. [🐳 Production Docker Architecture & Setup](#-production-docker-architecture--setup)
+  11. [🐧 Ubuntu / Debian Dockerized Production Deployment](#-ubuntu--debian-dockerized-production-deployment)
+  12. [🎩 CentOS / RHEL / Rocky Linux 9 Dockerized Production Deployment](#-centos--rhel--rocky-linux-9-dockerized-production-deployment)
+  13. [🔄 Production Docker Updates, Migrations & Zero-Downtime](#-production-docker-updates-migrations--zero-downtime)
+- **Security & Backups**
+  14. [🔒 Production Security & Maintenance](#-production-security--maintenance)
 
 ---
 
@@ -33,7 +41,7 @@ The application features full workflow automation for Electrician, Supervisor, a
 
 ---
 
-## ⚡ 1-Step Docker Setup (Zero Configuration)
+## ⚡ 1-Step Local Docker Setup (Zero Configuration)
 
 You do **not** need PHP, Composer, Node.js, or MySQL installed on your host machine. Docker handles the entire initialization automatically.
 
@@ -128,7 +136,10 @@ docker compose up -d --build
 
 ---
 
-## 📦 cPanel Deployment Guide
+## 📦 cPanel / Shared Hosting Guide (Native - No Docker)
+
+> [!NOTE]
+> This method deploys Laravel natively into cPanel using standard Apache/LiteSpeed web servers, MultiPHP, and MySQL without running Docker.
 
 This guide covers deploying the OCEI Data Archive on shared hosting or a VPS managed with cPanel.
 
@@ -245,7 +256,10 @@ In cPanel **Cron Jobs**, add a new cron running **Every Minute** (`* * * * *`):
 
 ---
 
-## 🐧 Ubuntu 22.04 / 24.04 LTS Production Deployment (LEMP)
+## 🐧 Ubuntu 22.04 / 24.04 LTS Server (Native LEMP - No Docker)
+
+> [!NOTE]
+> This method installs Nginx, PHP 8.3-FPM, and MySQL 8 directly onto Ubuntu OS packages (bare-metal or VPS) without using Docker.
 
 ### Step 1: System Update & Dependencies
 ```bash
@@ -395,7 +409,10 @@ Add:
 
 ---
 
-## 🎩 CentOS / RHEL / Rocky Linux 9 Production Deployment
+## 🎩 CentOS / RHEL / Rocky Linux 9 Server (Native LEMP - No Docker)
+
+> [!NOTE]
+> This method installs native Nginx, Remi RPM PHP 8.3-FPM, and MySQL 8 with full SELinux and FirewallD configuration without using Docker.
 
 ### Step 1: Enable Repositories & Install Stack
 ```bash
@@ -505,6 +522,335 @@ Test and reload:
 ```bash
 sudo nginx -t
 sudo systemctl reload nginx
+```
+
+---
+
+## 🐳 Production Docker Architecture & Setup
+
+If you prefer to deploy using **Docker** on your own Ubuntu, Debian, CentOS, or RHEL server instead of installing PHP and MySQL directly on the host, this section provides the complete step-by-step guide.
+
+### Recommended Production Architecture
+
+```text
+[ Internet Users ]
+       │ HTTPS (:443) / HTTP (:80)
+       ▼
+┌────────────────────────────────────────────────────────┐
+│ Host Reverse Proxy (Nginx + Let's Encrypt Certbot)     │
+│ Handles SSL, auto-renewal, DDoS protection & buffering │
+└───────────────────────┬────────────────────────────────┘
+                        │ Reverse Proxy to localhost:8090
+                        ▼
+┌────────────────────────────────────────────────────────┐
+│ Docker Network: ocei-archive-net                       │
+│                                                        │
+│  ┌──────────────────┐       ┌───────────────────────┐  │
+│  │ ocei-archive-nginx│──────▶│ ocei-archive-app      │  │
+│  │ (Nginx Alpine)   │ FastCGI│ (PHP 8.3 FPM Laravel) │  │
+│  └──────────────────┘       └──────────┬────────────┘  │
+│                                        │ TCP :3306     │
+│                                        ▼               │
+│                             ┌───────────────────────┐  │
+│                             │ ocei-archive-db       │  │
+│                             │ (MySQL 8.0)           │  │
+│                             │ Volume: db_data       │  │
+│                             └───────────────────────┘  │
+└────────────────────────────────────────────────────────┘
+```
+
+#### Why This Production Pattern?
+1. **Host Nginx + Certbot**: Let's Encrypt handles SSL certificate renewals automatically on the host without needing to mount certificates or reload Docker containers.
+2. **Container Isolation**: PHP 8.3, Laravel, and MySQL 8 run in secure isolated network bridges without exposing MySQL to the public internet.
+3. **Persistent Volumes**: All uploaded files (`storage/app/public`) and MySQL database tables (`db_data`) persist on disk across container rebuilds and reboots.
+
+---
+
+## 🐧 Ubuntu / Debian Dockerized Production Deployment
+
+### Step 1: Install Official Docker & Docker Compose
+```bash
+# Update package list & install prerequisites
+sudo apt update && sudo apt upgrade -y
+sudo apt install -y ca-certificates curl gnupg lsb-release git ufw
+
+# Add Docker's official GPG key
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+# Add Docker repository
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# Install Docker Engine & Compose plugin
+sudo apt update
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+# Enable & start Docker
+sudo systemctl enable --now docker
+```
+
+### Step 2: Clone the Repository
+```bash
+# Clone to /opt/ocei-data-archive
+sudo git clone https://github.com/JS-Soft-Solution/ocei-data-archive.git /opt/ocei-data-archive
+cd /opt/ocei-data-archive
+```
+
+### Step 3: Configure Production `.env`
+```bash
+cp .env.example .env
+nano .env
+```
+Ensure the following production settings:
+```ini
+APP_NAME="OCEI Data Archive"
+APP_ENV=production
+APP_KEY= # Left empty; will be generated on boot or via artisan
+APP_DEBUG=false
+APP_URL=https://archive.ocei.gov.bd
+
+# Database configuration
+DB_CONNECTION=mysql
+DB_HOST=db
+DB_PORT=3306
+DB_DATABASE=ocei_data_archive
+DB_USERNAME=ocei_user
+DB_PASSWORD=YourStrongProductionDBPassword!
+DB_ROOT_PASSWORD=YourStrongRootPassword2026!
+
+# Sessions & Cache
+SESSION_DRIVER=database
+CACHE_STORE=database
+FILESYSTEM_DISK=public
+```
+
+Also verify the matching passwords in `app/.env`:
+```bash
+cp .env app/.env
+```
+
+### Step 4: Build & Launch Docker Containers
+```bash
+cd /opt/ocei-data-archive
+
+# Build images and start containers in the background
+docker compose up -d --build
+
+# Verify all containers are healthy and running
+docker compose ps
+```
+
+The container entrypoint will automatically:
+- Wait for MySQL to become healthy.
+- Run database migrations (`php artisan migrate --force`).
+- Seed initial users and roles if fresh.
+- Create the storage symlink.
+- Configure permissions for `www-data`.
+
+### Step 5: Install Host Nginx for SSL Termination
+```bash
+sudo apt install -y nginx certbot python3-certbot-nginx
+```
+
+Create `/etc/nginx/sites-available/ocei-docker.conf`:
+```nginx
+server {
+    listen 80;
+    server_name archive.ocei.gov.bd; # Replace with your domain
+
+    client_max_body_size 64M;
+
+    location / {
+        proxy_pass http://127.0.0.1:8090;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 300s;
+        proxy_connect_timeout 300s;
+    }
+}
+```
+
+Enable site & reload:
+```bash
+sudo ln -s /etc/nginx/sites-available/ocei-docker.conf /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+Obtain free SSL certificate:
+```bash
+sudo certbot --nginx -d archive.ocei.gov.bd
+```
+
+### Step 6: Systemd Auto-Start on System Boot
+Create `/etc/systemd/system/ocei-docker.service`:
+```ini
+[Unit]
+Description=OCEI Data Archive Docker Stack
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/opt/ocei-data-archive
+ExecStart=/usr/bin/docker compose up -d
+ExecStop=/usr/bin/docker compose down
+TimeoutStartSec=0
+
+[Install]
+WantedBy=multi-user.target
+```
+Enable the service:
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable ocei-docker
+```
+
+### Step 7: Host Scheduler Cron for Docker
+Add the Laravel schedule runner to the host crontab:
+```bash
+sudo crontab -e
+```
+Add:
+```bash
+* * * * * cd /opt/ocei-data-archive && docker compose exec -T app php artisan schedule:run >> /dev/null 2>&1
+```
+
+---
+
+## 🎩 CentOS / RHEL / Rocky Linux 9 Dockerized Production Deployment
+
+### Step 1: Install Docker CE on RHEL / Rocky Linux 9
+```bash
+sudo dnf update -y
+sudo dnf install -y yum-utils git curl
+
+# Add Docker CE repository
+sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+# Install Docker CE & Compose
+sudo dnf install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+# Start and enable Docker daemon
+sudo systemctl enable --now docker
+```
+
+### Step 2: Clone Project & Configure Environment
+```bash
+sudo git clone https://github.com/JS-Soft-Solution/ocei-data-archive.git /opt/ocei-data-archive
+cd /opt/ocei-data-archive
+
+cp .env.example .env
+cp .env app/.env
+sudo nano .env # Set APP_ENV=production, APP_DEBUG=false, DB passwords, and APP_URL
+```
+
+### Step 3: SELinux Configuration for Docker Volumes
+In RHEL/CentOS, SELinux requires volume permissions if files are bind-mounted:
+```bash
+# Allow container access to application directory
+sudo chcon -Rt svirt_sandbox_file_t /opt/ocei-data-archive/app
+
+# Allow network connections through firewall
+sudo firewall-cmd --permanent --zone=public --add-service=http
+sudo firewall-cmd --permanent --zone=public --add-service=https
+sudo firewall-cmd --reload
+```
+
+### Step 4: Boot Containers
+```bash
+cd /opt/ocei-data-archive
+docker compose up -d --build
+```
+
+### Step 5: Host Reverse Proxy (Nginx) & SSL
+Install native Nginx on CentOS/RHEL:
+```bash
+sudo dnf install -y nginx epel-release
+sudo dnf install -y certbot python3-certbot-nginx
+```
+
+Create `/etc/nginx/conf.d/ocei-docker.conf`:
+```nginx
+server {
+    listen 80;
+    server_name archive.ocei.gov.bd;
+
+    client_max_body_size 64M;
+
+    location / {
+        proxy_pass http://127.0.0.1:8090;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 300s;
+        proxy_connect_timeout 300s;
+    }
+}
+```
+
+Allow Nginx to connect to network socket via SELinux:
+```bash
+sudo setsebool -P httpd_can_network_connect 1
+sudo systemctl enable --now nginx
+sudo certbot --nginx -d archive.ocei.gov.bd
+```
+
+---
+
+## 🔄 Production Docker Updates, Migrations & Zero-Downtime
+
+To deploy a new update or bugfix to a Dockerized production server:
+
+```bash
+cd /opt/ocei-data-archive
+
+# 1. Pull latest code from main branch
+git pull origin main
+
+# 2. Rebuild app container if Dockerfile or PHP packages changed
+docker compose build app
+
+# 3. Restart containers with new build
+docker compose up -d
+
+# 4. Run database migrations safely
+docker compose exec -T app php artisan migrate --force
+
+# 5. Clear and refresh caches
+docker compose exec -T app php artisan optimize:clear
+docker compose exec -T app php artisan config:cache
+docker compose exec -T app php artisan route:cache
+docker compose exec -T app php artisan view:cache
+```
+
+### Daily Docker Database Backup Script
+
+Create a backup script at `/opt/backup_db.sh`:
+```bash
+#!/bin/bash
+BACKUP_DIR="/var/backups/ocei_docker"
+mkdir -p "$BACKUP_DIR"
+DATE=$(date +%F_%H%M%S)
+
+cd /opt/ocei-data-archive
+docker compose exec -T db mysqldump -u root -p'YourRootPassword' ocei_data_archive | gzip > "$BACKUP_DIR/ocei_db_$DATE.sql.gz"
+
+# Keep only the last 30 days of backups
+find "$BACKUP_DIR" -type f -name "*.sql.gz" -mtime +30 -delete
+```
+Make executable and schedule in host crontab:
+```bash
+chmod +x /opt/backup_db.sh
+# Add to crontab:
+# 0 2 * * * /opt/backup_db.sh
 ```
 
 ---
