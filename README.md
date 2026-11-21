@@ -15,17 +15,18 @@ The application features full workflow automation for Electrician, Supervisor, a
   4. [🔑 Default Test Accounts & Roles](#-default-test-accounts--roles)
   5. [🌐 Accessing Services](#-accessing-services)
   6. [💻 Useful Development Commands](#-useful-development-commands)
+  7. [🧪 Seeding Test & QA Dummy Data (On-Demand)](#-seeding-test--qa-dummy-data-on-demand)
 - **Method 1: Regular / Native Deployment (No Docker)**
-  7. [📦 cPanel / Shared Hosting Guide (Native - No Docker)](#-cpanel--shared-hosting-guide-native---no-docker)
-  8. [🐧 Ubuntu 22.04 / 24.04 LTS Server (Native LEMP - No Docker)](#-ubuntu-2204--2404-lts-server-native-lemp---no-docker)
-  9. [🎩 CentOS / RHEL / Rocky Linux 9 Server (Native LEMP - No Docker)](#-centos--rhel--rocky-linux-9-server-native-lemp---no-docker)
+  8. [📦 cPanel / Shared Hosting Guide (Native - No Docker)](#-cpanel--shared-hosting-guide-native---no-docker)
+  9. [🐧 Ubuntu 22.04 / 24.04 LTS Server (Native LEMP - No Docker)](#-ubuntu-2204--2404-lts-server-native-lemp---no-docker)
+  10. [🎩 CentOS / RHEL / Rocky Linux 9 Server (Native LEMP - No Docker)](#-centos--rhel--rocky-linux-9-server-native-lemp---no-docker)
 - **Method 2: Dockerized Production Deployment (With Docker & Compose)**
-  10. [🐳 Production Docker Architecture & Setup](#-production-docker-architecture--setup)
-  11. [🐧 Ubuntu / Debian Dockerized Production Deployment](#-ubuntu--debian-dockerized-production-deployment)
-  12. [🎩 CentOS / RHEL / Rocky Linux 9 Dockerized Production Deployment](#-centos--rhel--rocky-linux-9-dockerized-production-deployment)
-  13. [🔄 Production Docker Updates, Migrations & Zero-Downtime](#-production-docker-updates-migrations--zero-downtime)
+  11. [🐳 Production Docker Architecture & Setup](#-production-docker-architecture--setup)
+  12. [🐧 Ubuntu / Debian Dockerized Production Deployment](#-ubuntu--debian-dockerized-production-deployment)
+  13. [🎩 CentOS / RHEL / Rocky Linux 9 Dockerized Production Deployment](#-centos--rhel--rocky-linux-9-dockerized-production-deployment)
+  14. [🔄 Production Docker Updates, Migrations & Zero-Downtime](#-production-docker-updates-migrations--zero-downtime)
 - **Security & Backups**
-  14. [🔒 Production Security & Maintenance](#-production-security--maintenance)
+  15. [🔒 Production Security & Maintenance](#-production-security--maintenance)
 
 ---
 
@@ -132,6 +133,36 @@ docker compose down
 # Wipe database and restart from a completely fresh slate
 docker compose down -v
 docker compose up -d --build
+```
+
+---
+
+## 🧪 Seeding Test & QA Dummy Data (On-Demand)
+
+> [!NOTE]
+> **Important**: Test dummy applications are **NOT** seeded automatically when containers are built or started. Container initialization executes `DatabaseSeeder`, which only creates essential system roles and default user accounts. This keeps clean production databases free from mock records.
+
+When conducting end-to-end QA, UI testing, load testing, or pagination verification, you can generate comprehensive dummy dataset on demand.
+
+### What `DummyDataSeeder` Populates:
+- **60 Electrician Permits** (`EL-10001` to `EL-10060`) distributed across all 5 lifecycle statuses (`draft`, `submitted_to_office_assistant`, `office_assistant_rejected`, `submitted_to_secretary`, `secretary_approved_final`), with register books, class endorsements (A, B, C, ABC), realistic English/Bengali names, and attached document scans.
+- **40 Supervisor Permits** (`SUP-20001` to `SUP-20040`) across all lifecycle stages, BTEB/University degrees, and ledger attachments.
+- **30 Contractor Permits** (`CONT-30001` to `CONT-30030`) with company titles, trade licenses, assigned certified supervisor IDs, and trade license scans.
+- **15 Audit Notifications** (read and unread) for realistic notification bell testing.
+- **Idempotent / Safe**: Uses `updateOrCreate` so running the command multiple times refreshes records without throwing duplicate key errors.
+
+### Command to Seed Dummy Data:
+
+```bash
+# Docker Environment (Recommended):
+docker compose exec app php artisan db:seed --class=DummyDataSeeder
+
+# Alternative direct Docker container command:
+docker exec -it ocei-archive-app php artisan db:seed --class=DummyDataSeeder
+
+# Native / Local Server (without Docker):
+cd app
+php artisan db:seed --class=DummyDataSeeder
 ```
 
 ---
