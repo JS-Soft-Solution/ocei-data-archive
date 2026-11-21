@@ -65,6 +65,13 @@
             </div>
         </li>
 
+        {{-- Help / User Guide Link --}}
+        <li class="nav-item d-none d-sm-block ps-2 pe-1">
+            <a class="nav-link px-2" href="{{ route('user-guide.index') }}" title="Interactive User Guide & Documentation" data-bs-toggle="tooltip" data-bs-placement="bottom">
+                <span class="fas fa-question-circle fs-8 text-primary"></span>
+            </a>
+        </li>
+
         {{-- Notifications --}}
         <li class="nav-item dropdown">
             <a class="nav-link notification-indicator notification-indicator-primary px-0 fa-icon-wait"
@@ -184,6 +191,10 @@
                     <a class="dropdown-item"
                         href="{{ Route::has('users.show') ? route('users.show', auth()->id()) : '#' }}">
                         Profile &amp; account
+                    </a>
+
+                    <a class="dropdown-item" href="{{ route('user-guide.index') }}">
+                        <span class="fas fa-book-open me-2 text-warning"></span> User Guide & Workflows
                     </a>
 
                     <div class="dropdown-divider"></div>

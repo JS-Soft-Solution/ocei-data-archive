@@ -1,5 +1,9 @@
 # 📘 OCEI Data Archive — Comprehensive User & Workflow Guide (v2.0)
 
+> [!TIP]
+> **🚀 Interactive In-App User Guide Available:**
+> An interactive, searchable HTML version of this User Guide is embedded directly within the application at **[`http://localhost:8095/user-guide`](http://localhost:8095/user-guide)**. It includes live interactive tabs, high-resolution annotated ledger scan diagrams, role badges, and print-ready styles accessible from the sidebar and top navigation.
+
 Welcome to the **OCEI Data Archive System User Guide**. This document provides an end-to-end, role-based visual walkthrough of the entire lifecycle for **Electrician**, **Supervisor**, and **Contractor** renew applications.
 
 ---

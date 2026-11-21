@@ -36,8 +36,12 @@ Route::middleware('guest')->group(function () {
 //})->name('dashboard');
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\UserGuideController;
 
 Route::middleware(['auth'])->group(function () {
+
+    // User Guide & Interactive Workflows
+    Route::get('/user-guide', [UserGuideController::class, 'index'])->name('user-guide.index');
 
     // Password Change Routes
     Route::get('/change-password', [ChangePasswordController::class, 'edit'])->name('password.change');
