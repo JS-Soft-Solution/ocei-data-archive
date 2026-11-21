@@ -140,6 +140,27 @@ docker compose restart
 
 ---
 
+## 🧪 Seeding Test & QA Dummy Data (On-Demand)
+
+> [!NOTE]
+> Test dummy applications are **NOT** seeded automatically during container builds or startup. This keeps clean production databases free from mock records.
+
+To populate comprehensive, realistic test records (60 Electricians, 40 Supervisors, 30 Contractors across all 5 lifecycle stages: Draft, Submitted to OA, OA Rejected, Submitted to Secretary, Final Approved, along with document attachments and system notifications) for QA and performance testing:
+
+```bash
+# Docker Environment (v2 stack):
+docker compose exec app php artisan db:seed --class=DummyDataSeeder
+
+# Alternative direct container command:
+docker exec -it ocei-v2-app php artisan db:seed --class=DummyDataSeeder
+
+# Native / Local Server (without Docker):
+cd app
+php artisan db:seed --class=DummyDataSeeder
+```
+
+---
+
 ## 📦 cPanel / Shared Hosting Guide (Native - No Docker)
 
 > [!NOTE]
