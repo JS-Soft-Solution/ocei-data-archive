@@ -13,7 +13,7 @@ class NotificationController extends Controller
      */
     public function index(Request $request)
     {
-        $perPage = $request->get('per_page', 20);
+        $perPage = $this->getSafePerPage($request, 20);
 
         // Mark all unread notifications as read when viewing this page
         Auth::user()

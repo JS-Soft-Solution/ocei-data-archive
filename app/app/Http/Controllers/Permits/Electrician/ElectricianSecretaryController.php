@@ -23,7 +23,7 @@ class ElectricianSecretaryController extends Controller
             ->with(['attachments', 'entryBy', 'verifiedByOfficeAssistant'])
             ->filter($request->except('status'));
 
-        $perPage = $request->get('per_page', 25);
+        $perPage = $this->getSafePerPage($request);
         $applications = $query->latest()->paginate($perPage)->appends($request->except('page'));
 
         return view('permits.electrician.secretary.pending', compact('applications'));
@@ -40,7 +40,7 @@ class ElectricianSecretaryController extends Controller
             ->with(['attachments', 'entryBy', 'verifiedByOfficeAssistant'])
             ->filter($request->except('status'), 'rejected_at');
 
-        $perPage = $request->get('per_page', 25);
+        $perPage = $this->getSafePerPage($request);
         $applications = $query->latest('rejected_at')->paginate($perPage)->appends($request->except('page'));
 
         return view('permits.electrician.secretary.rejected', compact('applications'));
@@ -58,7 +58,7 @@ class ElectricianSecretaryController extends Controller
             ->filter($request->except('status'), 'approved_at_secretary');
 
 
-        $perPage = $request->get('per_page', 25);
+        $perPage = $this->getSafePerPage($request);
         $applications = $query->latest('approved_at_secretary')->paginate($perPage)->appends($request->except('page'));
 
         return view('permits.electrician.secretary.approved', compact('applications'));

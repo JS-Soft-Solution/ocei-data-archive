@@ -32,9 +32,8 @@ class SupervisorAdminController extends Controller
         // Apply filters (search, status, book_number, class, year, district, division, dates)
         $query->filter($request);
 
-        $applications = $query->latest();
-        $perPage = request()->get("per_page", 25);
-        $applications = $query->latest()->paginate($perPage)->appends(request()->except("page"));
+        $perPage = $this->getSafePerPage($request);
+        $applications = $query->latest()->paginate($perPage)->appends($request->except("page"));
 
         // Statistics
         $statistics = [

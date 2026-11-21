@@ -33,7 +33,7 @@ class ElectricianAdminController extends Controller
         $query->filter($request);
 
 
-        $perPage = $request->get('per_page', 25);
+        $perPage = $this->getSafePerPage($request);
         $applications = $query->latest()->paginate($perPage)->appends($request->except('page'));
 
         // Statistics

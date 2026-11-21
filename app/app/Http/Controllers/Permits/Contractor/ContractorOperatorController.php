@@ -25,7 +25,7 @@ class ContractorOperatorController extends Controller
             ->with(['attachments', 'entryBy'])
             ->filter($request);
 
-        $perPage = $request->get('per_page', 25);
+        $perPage = $this->getSafePerPage($request);
         $applications = $query->latest()->paginate($perPage)->appends($request->except('page'));
 
         return view('permits.contractor.operator.index', compact('applications'));
@@ -44,7 +44,7 @@ class ContractorOperatorController extends Controller
             ->with(['attachments', 'entryBy'])
             ->filter($request->except('status'));
 
-        $perPage = $request->get('per_page', 25);
+        $perPage = $this->getSafePerPage($request);
         $applications = $query->latest()->paginate($perPage)->appends($request->except('page'));
 
         return view('permits.contractor.operator.pending', compact('applications'));
@@ -63,7 +63,7 @@ class ContractorOperatorController extends Controller
             ->with(['attachments', 'entryBy', 'rejectedBy'])
             ->filter($request->except('status'));
 
-        $perPage = $request->get('per_page', 25);
+        $perPage = $this->getSafePerPage($request);
         $applications = $query->latest('updated_at')->paginate($perPage)->appends($request->except('page'));
 
         return view('permits.contractor.operator.rejected', compact('applications'));
@@ -82,7 +82,7 @@ class ContractorOperatorController extends Controller
             ->with(['attachments', 'entryBy', 'approvedBySecretary', 'verifiedByOfficeAssistant'])
             ->filter($request->except('status'), 'approved_at_secretary');
 
-        $perPage = $request->get('per_page', 25);
+        $perPage = $this->getSafePerPage($request);
         $applications = $query->latest('approved_at_secretary')->paginate($perPage)->appends($request->except('page'));
 
         return view('permits.contractor.operator.approved', compact('applications'));

@@ -32,7 +32,7 @@ class ContractorAdminController extends Controller
         // Apply filters (search, status, book_number, class, year, district, division, dates)
         $query->filter($request);
 
-        $perPage = $request->get('per_page', 25);
+        $perPage = $this->getSafePerPage($request);
         $applications = $query->latest()->paginate($perPage)->appends($request->except('page'));
 
         // Statistics

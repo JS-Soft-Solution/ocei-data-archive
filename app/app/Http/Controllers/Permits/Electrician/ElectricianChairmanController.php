@@ -21,7 +21,7 @@ class ElectricianChairmanController extends Controller
             ->filter($request->except('status'), 'approved_at_secretary');
 
 
-        $perPage = $request->get('per_page', 25);
+        $perPage = $this->getSafePerPage($request);
         $applications = $query->latest('approved_at_secretary')->paginate($perPage)->appends($request->except('page'));
 
         return view('permits.electrician.chairman.index', compact('applications'));
