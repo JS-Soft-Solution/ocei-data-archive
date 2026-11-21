@@ -325,11 +325,10 @@ class EndToEndLifecycleTest extends TestCase
             ->get(route('user-guide.index'));
 
         $response->assertStatus(200);
-        $response->assertSee('User Guide', false);
-        $response->assertSee('Role & Permission Governance', false);
-        $response->assertSee('Electrician Permit Lifecycle Flowchart', false);
-        $response->assertSee('Supervisor Certificate Flow with Audit Rejection Loop', false);
-        $response->assertSee('Annotated Ledger Scans', false);
+        $response->assertSee('System User Guide', false);
+        $response->assertSee('Data Entry Operator (DEO) Complete Playbook', false);
+        $response->assertSee('Office Assistant (Verification Officer) Playbook', false);
+        $response->assertSee('Electrician Historical Ledger', false);
         $response->assertSee('assets/img/guide/media_1793421353799_e7be040e.jpg', false);
     }
 }
