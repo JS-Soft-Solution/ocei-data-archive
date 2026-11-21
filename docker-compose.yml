@@ -86,7 +86,7 @@ services:
     working_dir: /var/www/html
     volumes:
       - ./app:/var/www/html
-    command: sh -c "npm install && tail -f /dev/null"
+    command: sh -c "npm install --legacy-peer-deps && npm run build && tail -f /dev/null"
     ports:
       - "5174:5174"
     networks:
