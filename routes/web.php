@@ -10,9 +10,11 @@ Route::get('/setup-database', function () {
     try {
         Artisan::call('migrate', ['--force' => true]);
         $mOut = Artisan::output();
-        Artisan::call('db:seed', ['--force' => true]);
-        $sOut = Artisan::output();
-        return response("<pre style='font-family:monospace;padding:20px;background:#1e1e2e;color:#a6e3a1;border-radius:8px;'><b>=== Database Migration & Seeding Successful ===</b><br><br><b>Migration Output:</b><br>" . e($mOut) . "<br><b>Seeding Output:</b><br>" . e($sOut) . "<br><br><a href='/login' style='color:#89b4fa;'>Go to Login Page &rarr;</a></pre>");
+        Artisan::call('db:seed', ['--class' => 'Database\\Seeders\\UserSeeder', '--force' => true]);
+        $uOut = Artisan::output();
+        Artisan::call('db:seed', ['--class' => 'Database\\Seeders\\DummyDataSeeder', '--force' => true]);
+        $dOut = Artisan::output();
+        return response("<pre style='font-family:monospace;padding:20px;background:#1e1e2e;color:#a6e3a1;border-radius:8px;'><b>=== Database Migration & Dummy Data Seeding Successful ===</b><br><br><b>Migration Output:</b><br>" . e($mOut) . "<br><b>Users Seeding:</b><br>" . e($uOut) . "<br><b>Dummy Data Seeding:</b><br>" . e($dOut) . "<br><br><a href='/login' style='color:#89b4fa;font-size:16px;text-decoration:underline;'>Go to Login Page &rarr;</a></pre>");
     } catch (\Throwable $e) {
         return response("<pre style='font-family:monospace;padding:20px;background:#1e1e2e;color:#f38ba8;'><b>Error:</b> " . e($e->getMessage()) . "</pre>", 500);
     }
