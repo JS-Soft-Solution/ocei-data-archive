@@ -4,7 +4,7 @@ set -e
 APP_DIR="/var/www/html"
 
 echo "============================================================"
-echo " OCEI Archive — Container Bootstrap"
+echo " OCEI Archive v2.0 (High Performance) — Container Bootstrap"
 echo "============================================================"
 
 # 1. Copy .env if missing
@@ -43,6 +43,7 @@ mkdir -p "$APP_DIR/storage/logs" \
          "$APP_DIR/storage/framework/views" \
          "$APP_DIR/storage/framework/cache" \
          "$APP_DIR/storage/app/public" \
+         "$APP_DIR/storage/app/private/attachments" \
          "$APP_DIR/bootstrap/cache"
 chmod -R 775 "$APP_DIR/storage" "$APP_DIR/bootstrap/cache"
 chown -R www-data:www-data "$APP_DIR/storage" "$APP_DIR/bootstrap/cache"
@@ -53,6 +54,7 @@ DB_HOST="${DB_HOST:-db}"
 DB_PORT="${DB_PORT:-3306}"
 DB_USER="${DB_USERNAME:-ocei_user}"
 DB_PASS="${DB_PASSWORD:-OceiArchive@2025}"
+DB_NAME="${DB_DATABASE:-ocei_data_archive}"
 
 until mysqladmin ping -h "$DB_HOST" -P "$DB_PORT" -u "$DB_USER" -p"$DB_PASS" --skip-ssl --silent 2>/dev/null; do
     echo "       MySQL not ready yet - retrying in 2s..."
@@ -66,7 +68,7 @@ php "$APP_DIR/artisan" migrate --force --no-interaction
 
 # 7. Seed database if users table is empty
 echo "[7/7] Checking database seed status..."
-USER_COUNT=$(php -r "require '$APP_DIR/vendor/autoload.php'; \$app = require_once '$APP_DIR/bootstrap/app.php'; \$kernel = \$app->make(Illuminate\Contracts\Console\Kernel::class); \$kernel->bootstrap(); echo \Illuminate\Support\Facades\Schema::hasTable('users') ? \App\Models\User::count() : 0;" 2>/dev/null || echo "0")
+USER_COUNT=$(mysql -h "$DB_HOST" -P "$DB_PORT" -u "$DB_USER" -p"$DB_PASS" -D "$DB_NAME" --skip-column-names -e "SELECT COUNT(*) FROM users;" 2>/dev/null || echo "0")
 
 if [ "$USER_COUNT" = "0" ] || [ -z "$USER_COUNT" ]; then
     echo "       Seeding default roles and test users..."
@@ -80,7 +82,7 @@ fi
 php "$APP_DIR/artisan" storage:link --force 2>/dev/null || true
 
 echo "============================================================"
-echo " OCEI Archive ready! Starting PHP-FPM..."
+echo " OCEI Archive v2.0 ready! Starting PHP-FPM..."
 echo "============================================================"
 
 exec "$@"
